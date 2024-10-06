@@ -109,6 +109,8 @@ void I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint3
 // IRQ Configuration and ISR handling
 void I2C_IRQInterruptControl(I2C_Handle_t *pI2CHandle, uint8_t EnOrDi);
 void I2C1_EV_IRQHandler();
+void I2C2_EV_IRQHandler();
+void I2C3_EV_IRQHandler();
 void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle);
 void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 void I2C_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
