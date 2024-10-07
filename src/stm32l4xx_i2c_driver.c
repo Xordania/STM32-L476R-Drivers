@@ -686,6 +686,45 @@ static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint8_t len){
 
 }
 
+
+void I2C_SlaveIntialization(I2C_Handle_t *pI2CHandle){
+	// Initial settings
+
+	// Clear OA1EN and OA2EN
+	pI2CHandle->pI2Cx->OAR1 &= ~(ENABLE << I2Cx_OAR1_OA1EN);
+	pI2CHandle->pI2Cx->OAR2 &= ~(ENABLE << I2Cx_OAR2_OA2EN);
+
+	// Configure OA1, OA2, O1EN, OA2EN.
+	// Only 7-bit addressing and no OA2MSK taken into account
+
+	// Clear OA1 before setting it
+	pI2CHandle->pI2Cx->OAR1 &= ~(0x3FF << I2Cx_OAR1_OA1);
+	pI2CHandle->pI2Cx->OAR1 |= (pI2CHandle->OA1 << I2Cx_OAR1_OA1);
+
+	// Clear OA2 before setting it
+	pI2CHandle->pI2Cx->OAR2 &= ~(0x3FF << I2Cx_OAR2_OA2);
+	pI2CHandle->pI2Cx->OAR2 |= (pI2CHandle->OA2 << I2Cx_OAR2_OA2);
+
+	// Enable OA1EN and OA2En
+	pI2CHandle->pI2Cx->OAR1 |= (ENABLE << I2Cx_OAR1_OA1EN);
+	pI2CHandle->pI2Cx->OAR2 |= (ENABLE << I2Cx_OAR2_OA2EN);
+
+	// Clear and then confgure SBC in I2C_CR1
+	pI2CHandle->pI2Cx->CR1 &= ~(ENABLE << I2Cx_CR1_SBC);
+	pI2CHandle->pI2Cx->CR1 |= (pI2CHandle->SBC << I2Cx_CR1_SBC);
+
+	// Intialization of interrupts is assumed to be taken care of by the application
+}
+
+void I2C_SlaveSendData(I2C_RegDef_t *pI2C, uint8_t data){
+
+}
+
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2CHandle){
+	return 0;
+}
+
+
 // Aplication callback
 __weak void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t AppEv){
 }

@@ -41,6 +41,9 @@ typedef struct
 	uint8_t		 DevAddr;		// Stores the address of the slave or this device (as a slave)
 	uint32_t	 RxSize;		// Size of receiving data
 	uint8_t	  	 Sr;			// Repeated start value
+	uint8_t		 SBC;			// Slave Byte Control
+	uint8_t		 OA1;			// Own Address 1. 7-bit only
+	uint8_t 	 OA2;			// Own Address 2  7-bit only
 }I2C_Handle_t;
 
 // I2C SCL Speed contrl
@@ -103,8 +106,12 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx);
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t slaveAddr);
 void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t slaveAddr);
 
+void I2C_SlaveInitialization(I2C_Handle_t *pI2CHandle);
 void I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t slaveAddr);
 void I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t slaveAddr);
+
+void I2C_SlaveSendData(I2C_RegDef_t *pI2CHandle, uint8_t data);
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2CHandle);
 
 // IRQ Configuration and ISR handling
 void I2C_IRQInterruptControl(I2C_Handle_t *pI2CHandle, uint8_t EnOrDi);
