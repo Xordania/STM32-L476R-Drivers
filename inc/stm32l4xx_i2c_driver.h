@@ -104,7 +104,11 @@ typedef struct
 #define I2C_EV_TX_FAILED		3
 #define I2C_EV_TX_CMPLT			4
 #define I2C_EQ_INVALID_HANDLE	5
-#define I2C_EQ_BUSY				6
+#define I2C_EV_DATA_RCV			6
+#define I2C_EV_NACK				7
+#define I2C_EQ_BUSY				8
+#define I2C_EV_DATA_REQ			9
+
 //------------------------------------------------------------FUNCTION DEFINITIONS------------------------------------------------------------//
 
 // Peripheral clock set up
