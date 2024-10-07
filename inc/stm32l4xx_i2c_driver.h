@@ -22,8 +22,11 @@ typedef struct
 	uint8_t	 I2C_PRESC;
 	uint8_t  I2C_ANFOFF;
 	uint8_t  I2C_DNF;
-	uint8_t  I2C_NOSTRECH;
-	uint8_t  I2C_GC;
+	uint8_t  I2C_NOSTRECH;		// No stech on slave mode
+	uint8_t  I2C_GC;			// General call
+	uint8_t	 I2C_SBC;			// Slave Byte Control
+	uint8_t	 I2C_OA1;			// Own Address 1. 7-bit only
+	uint8_t  I2C_OA2;			// Own Address 2  7-bit only
 }I2C_Config_t;
 
 // Handle structure for I2Cx peripheral
@@ -40,10 +43,9 @@ typedef struct
 	uint32_t	 TxRxState;		// Is the MU currently transmitting or receiving
 	uint8_t		 DevAddr;		// Stores the address of the slave or this device (as a slave)
 	uint32_t	 RxSize;		// Size of receiving data
-	uint8_t	  	 Sr;			// Repeated start value
-	uint8_t		 SBC;			// Slave Byte Control
-	uint8_t		 OA1;			// Own Address 1. 7-bit only
-	uint8_t 	 OA2;			// Own Address 2  7-bit only
+	uint8_t	 	 Sr;			// Repeated start value
+
+
 }I2C_Handle_t;
 
 // I2C SCL Speed contrl

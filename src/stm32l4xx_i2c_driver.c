@@ -110,6 +110,14 @@ void I2C_Init(I2C_Handle_t *pI2CHandle){
 	// Turn on the clock going to the I2C peripheral
 	I2C_PeriClockControl(pI2CHandle->pI2Cx, ENABLE);
 
+	// Clear the CR1, CR2, TIMINGR, OAR1 and OAR2 registers
+	pI2CHandle->pI2Cx->CR1 &= 0;
+	pI2CHandle->pI2Cx->CR2 &= 0;
+	pI2CHandle->pI2Cx->TIMINGR &= 0;
+	pI2CHandle->pI2Cx->OAR1 &= 0;
+	pI2CHandle->pI2Cx->OAR2 &= 0;
+
+
 	// Configure ANFOFF register
 	tempreg = 0;
 	tempreg |= (pI2CHandle->I2C_Config.I2C_ANFOFF << I2Cx_CR1_ANFOFF);
@@ -119,7 +127,6 @@ void I2C_Init(I2C_Handle_t *pI2CHandle){
 	tempreg = 0;
 	tempreg |= (pI2CHandle->I2C_Config.I2C_DNF << I2Cx_CR1_DNF);
 	pI2CHandle->pI2Cx->CR1 |= tempreg;
-
 
 	// NACK control bit
 	tempreg = 0;
@@ -147,11 +154,29 @@ void I2C_Init(I2C_Handle_t *pI2CHandle){
 	tempreg |= (pI2CHandle->I2C_Config.I2C_PRESC << I2Cx_TIMINGR_PRESC);
 	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
 
+	// Configure register for slave mode
+
+	tempreg = 0;
+	tempreg |= (pI2CHandle->I2C_Config.I2C_NOSTRECH << I2Cx_CR1_NOSTRECH);
+	pI2CHandle->pI2Cx->CR1 |= tempreg;
+
+	tempreg = 0;
+	tempreg |= (pI2CHandle->I2C_Config.I2C_GC << I2Cx_CR1_GC);
+	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
+
+	tempreg = 0;
+	tempreg |= (pI2CHandle->I2C_Config.I2C_SBC << I2Cx_CR1_SBC);
+	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
 
 	// Program the address of the device (using 7-bit address)
 	tempreg = 0;
 	tempreg |= (pI2CHandle->I2C_Config.I2C_DeviceAddress << I2Cx_OAR1_OA1);
 	pI2CHandle->pI2Cx->OAR1 |= tempreg;
+
+	tempreg = 0;
+	tempreg |= (pI2CHandle->I2C_Config.I2C_OA2 << I2Cx_OAR2_OA2);
+	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
+
 
 }
 
@@ -688,7 +713,7 @@ static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint8_t len){
 
 
 void I2C_SlaveIntialization(I2C_Handle_t *pI2CHandle){
-	// Initial settings
+	// Initial settings handled in I2C_Init()
 
 	// Clear OA1EN and OA2EN
 	pI2CHandle->pI2Cx->OAR1 &= ~(ENABLE << I2Cx_OAR1_OA1EN);
