@@ -41,9 +41,10 @@ typedef struct
 	uint32_t	 RxLen;			// Length of the Rx data
 	uint32_t	 nReceived;		// Number of data packets received
 	uint32_t	 TxRxState;		// Is the MU currently transmitting or receiving
-	uint8_t		 DevAddr;		// Stores the address of the slave or this device (as a slave)
+	uint8_t		 DevAddr;		// Stores the address of the slave
 	uint32_t	 RxSize;		// Size of receiving data
 	uint8_t	 	 Sr;			// Repeated start value
+	uint8_t 	 SorM;			// Slave or Master
 
 
 }I2C_Handle_t;
@@ -60,6 +61,10 @@ typedef struct
 #define I2C_MASTER_WRITE 	0
 #define I2C_MASTER_READ 	1
 
+// I2C Slave start read write
+#define I2C_SLAVE_WRITE		0
+#define I2C_SLAVE_READ		1
+
 // I2C reload
 #define I2C_AUTOEND_TRUE 	1
 #define I2C_AUTOEND_FALSE 	0
@@ -68,6 +73,11 @@ typedef struct
 #define I2C_NOT_BUSY		0
 #define I2C_BUSY_IN_TX		1
 #define I2C_BUSY_IN_RX		2
+
+// Slave or Master states
+#define	I2C_NO_MODE			0
+#define I2C_SLAVE_MODE		1
+#define I2C_MASTER_MODE		2
 
 // I2C related status flags
 #define I2C_TXE_FLAG			(1 << I2Cx_ISR_TXE)
@@ -85,6 +95,7 @@ typedef struct
 #define I2C_ALERT_FLAG			(1 << I2Cx_ISR_ALERT)
 #define I2C_BUSY_FLAG			(1 << I2Cx_ISR_BUSY)
 #define I2C_DIR_FLAG			(1 << I2Cx_ISR_DIR)
+
 
 // Application events
 
