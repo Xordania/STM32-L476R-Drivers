@@ -25,7 +25,7 @@ typedef struct
 	uint8_t  I2C_NOSTRECH;		// No stech on slave mode
 	uint8_t  I2C_GC;			// General call
 	uint8_t	 I2C_SBC;			// Slave Byte Control
-	uint8_t	 I2C_OA1;			// Own Address 1. 7-bit only
+	uint8_t	 I2C_OA1;			// Own Address 1 7-bit only
 	uint8_t  I2C_OA2;			// Own Address 2  7-bit only
 }I2C_Config_t;
 
@@ -129,6 +129,10 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
 // Other peripheral Control APIs
 uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint32_t FlagName);
 uint8_t I2C_VerifyResponse(uint8_t ackByte);
+
+// Address matched slave callbacks
+void I2C_SlaveOA1MatchCallback(I2C_Handle_t *pI2CHandle);
+void I2C_SlaveOA2MatchCallback(I2C_Handle_t *pI2CHandle);
 
 // Aplication callback
 void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t AppEv);
