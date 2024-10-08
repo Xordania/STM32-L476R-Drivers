@@ -23,7 +23,7 @@ typedef struct
 	uint8_t  I2C_ANFOFF;
 	uint8_t  I2C_DNF;
 	uint8_t  I2C_NOSTRECH;		// No stech on slave mode
-	uint8_t  I2C_GC;			// General call
+	uint8_t  I2C_GCEN;			// General call enable
 	uint8_t	 I2C_SBC;			// Slave Byte Control
 	uint8_t	 I2C_OA1;			// Own Address 1 7-bit only
 	uint8_t  I2C_OA2;			// Own Address 2 7-bit only
