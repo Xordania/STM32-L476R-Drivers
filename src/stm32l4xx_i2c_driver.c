@@ -114,8 +114,6 @@ void I2C_Init(I2C_Handle_t *pI2CHandle){
 	pI2CHandle->pI2Cx->CR1 &= 0;
 	pI2CHandle->pI2Cx->CR2 &= 0;
 	pI2CHandle->pI2Cx->TIMINGR &= 0;
-	pI2CHandle->pI2Cx->OAR1 &= 0;
-	pI2CHandle->pI2Cx->OAR2 &= 0;
 
 
 	// Configure ANFOFF register
@@ -155,28 +153,9 @@ void I2C_Init(I2C_Handle_t *pI2CHandle){
 	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
 
 	// Configure register for slave mode
-
 	tempreg = 0;
 	tempreg |= (pI2CHandle->I2C_Config.I2C_NOSTRECH << I2Cx_CR1_NOSTRECH);
 	pI2CHandle->pI2Cx->CR1 |= tempreg;
-
-	tempreg = 0;
-	tempreg |= (pI2CHandle->I2C_Config.I2C_GC << I2Cx_CR1_GCEN);
-	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
-
-	tempreg = 0;
-	tempreg |= (pI2CHandle->I2C_Config.I2C_SBC << I2Cx_CR1_SBC);
-	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
-
-	// Program the address of the device (using 7-bit address)
-	tempreg = 0;
-	tempreg |= (pI2CHandle->I2C_Config.I2C_DeviceAddress << I2Cx_OAR1_OA1);
-	pI2CHandle->pI2Cx->OAR1 |= tempreg;
-
-	tempreg = 0;
-	tempreg |= (pI2CHandle->I2C_Config.I2C_OA2 << I2Cx_OAR2_OA2);
-	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
-
 
 }
 
@@ -795,16 +774,19 @@ void I2C_SlaveInitialization(I2C_Handle_t *pI2CHandle){
 	// Only 7-bit addressing and no OA2MSK taken into account
 
 	// Clear OA1 before setting it
-	pI2CHandle->pI2Cx->OAR1 &= ~(0x3FF << I2Cx_OAR1_OA1);
-	pI2CHandle->pI2Cx->OAR1 |= (pI2CHandle->I2C_Config.I2C_OA1 << (I2Cx_OAR1_OA1 + 1));
-
+	if(pI2CHandle->I2C_Config.I2C_OA1 != 0){
+		pI2CHandle->pI2Cx->OAR1 &= ~(0x3FF << I2Cx_OAR1_OA1);
+		pI2CHandle->pI2Cx->OAR1 |= (pI2CHandle->I2C_Config.I2C_OA1 << (I2Cx_OAR1_OA1 + 1));
+		pI2CHandle->pI2Cx->OAR1 |= (ENABLE << I2Cx_OAR1_OA1EN);
+	}
 	// Clear OA2 before setting it
-	pI2CHandle->pI2Cx->OAR2 &= ~(0x3FF << I2Cx_OAR2_OA2);
-	pI2CHandle->pI2Cx->OAR2 |= (pI2CHandle->I2C_Config.I2C_OA2 << (I2Cx_OAR2_OA2 + 1));
+	if(pI2CHandle->I2C_Config.I2C_OA2 != 0){
+		pI2CHandle->pI2Cx->OAR2 &= ~(0x3FF << I2Cx_OAR2_OA2);
+		pI2CHandle->pI2Cx->OAR2 |= (pI2CHandle->I2C_Config.I2C_OA2 << (I2Cx_OAR2_OA2 + 1));
+		pI2CHandle->pI2Cx->OAR2 |= (ENABLE << I2Cx_OAR2_OA2EN);
 
-	// Enable OA1EN and OA2EN
-	pI2CHandle->pI2Cx->OAR1 |= (ENABLE << I2Cx_OAR1_OA1EN);
-	pI2CHandle->pI2Cx->OAR2 |= (ENABLE << I2Cx_OAR2_OA2EN);
+	}
+
 
 	// SBC cleared and configured in I2C_Init()
 
