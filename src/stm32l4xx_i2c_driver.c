@@ -348,8 +348,6 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 	if(event_flag && control_bit){
 		//TXIS flag is set
 
-
-
 		// Check to see if the Microcontroller is currently acting a master or slave
 		if(pI2CHandle->SorM == I2C_MASTER_MODE){
 
@@ -814,11 +812,11 @@ void I2C_SlaveIntialization(I2C_Handle_t *pI2CHandle){
 }
 
 void I2C_SlaveSendData(I2C_RegDef_t *pI2C, uint8_t data){
-
+	pI2C->TXDR |= data;
 }
 
-uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2CHandle){
-	return 0;
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C){
+	return (pI2C->RXNE & 0xf);
 }
 
 // A function that gets called whenver there in a match of address OA1 in slave mode
