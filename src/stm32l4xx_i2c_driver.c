@@ -316,12 +316,15 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 	if(event_flag && control_bit){
 		//RXNE flag is set
 
-		*pI2CHandle->pRxBuffer = pI2CHandle->pI2Cx->RXDR;
-		pI2CHandle->pRxBuffer++;
-		pI2CHandle->nReceived++;
 
 		// Check to see if the Microcontroller is currently acting a master or slave
 		if(pI2CHandle->SorM == I2C_MASTER_MODE){
+
+			// Read from the Rx buffer and increment the pointer
+			*pI2CHandle->pRxBuffer = pI2CHandle->pI2Cx->RXDR;
+			pI2CHandle->pRxBuffer++;
+			pI2CHandle->nReceived++;
+
 			// If NBYTES have been transmitted and a repeated start is not required let the
 			//application know the receiving has finished successfully
 			if(pI2CHandle->nReceived == pI2CHandle->RxLen){
@@ -345,14 +348,18 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 	if(event_flag && control_bit){
 		//TXIS flag is set
 
-		// Load the next byte into Tx buffer and increment the pointer
-		// This clears the TXIS flag
-		pI2CHandle->pI2Cx->TXDR = *pI2CHandle->pTxBuffer;
-		pI2CHandle->pTxBuffer++;
-		pI2CHandle->nTransmitted++;
+
 
 		// Check to see if the Microcontroller is currently acting a master or slave
 		if(pI2CHandle->SorM == I2C_MASTER_MODE){
+
+			// Load the next byte into Tx buffer and increment the pointer
+			// This clears the TXIS flag
+			pI2CHandle->pI2Cx->TXDR = *pI2CHandle->pTxBuffer;
+			pI2CHandle->pTxBuffer++;
+			pI2CHandle->nTransmitted++;
+
+
 			// If NBYTES have been transmitted and a repeated start is not required let the
 			//application know the transmit has finished successfully
 			if(pI2CHandle->nTransmitted == pI2CHandle->TxLen){

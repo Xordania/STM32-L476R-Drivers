@@ -99,16 +99,14 @@ typedef struct
 
 // Application events
 
-#define I2C_EV_RX_FAILED		1
-#define I2C_EV_RX_CMPLT			2
-#define I2C_EV_TX_FAILED		3
-#define I2C_EV_TX_CMPLT			4
-#define I2C_EQ_INVALID_HANDLE	5
-#define I2C_EV_DATA_RCV			6
-#define I2C_EV_NACK				7
-#define I2C_EV_STOP				8
-#define I2C_EQ_BUSY				9
-#define I2C_EV_DATA_REQ			10
+#define I2C_EV_TX_FAILED		1
+#define I2C_EV_TX_CMPLT			2
+#define I2C_EQ_INVALID_HANDLE	3
+#define I2C_EV_DATA_RCV			4
+#define I2C_EV_NACK				5
+#define I2C_EV_STOP				6
+#define I2C_EQ_BUSY				7
+#define I2C_EV_DATA_REQ			8
 
 //------------------------------------------------------------FUNCTION DEFINITIONS------------------------------------------------------------//
 
