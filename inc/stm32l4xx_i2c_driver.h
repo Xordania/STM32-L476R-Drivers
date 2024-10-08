@@ -26,7 +26,7 @@ typedef struct
 	uint8_t  I2C_GC;			// General call
 	uint8_t	 I2C_SBC;			// Slave Byte Control
 	uint8_t	 I2C_OA1;			// Own Address 1 7-bit only
-	uint8_t  I2C_OA2;			// Own Address 2  7-bit only
+	uint8_t  I2C_OA2;			// Own Address 2 7-bit only
 }I2C_Config_t;
 
 // Handle structure for I2Cx peripheral
@@ -101,7 +101,7 @@ typedef struct
 
 #define I2C_EV_TX_FAILED		1
 #define I2C_EV_TX_CMPLT			2
-#define I2C_EV_TX_CMPLT			3
+#define I2C_EV_RX_CMPLT			3
 #define I2C_EQ_INVALID_HANDLE	4
 #define I2C_EV_DATA_RCV			5
 #define I2C_EV_NACK				6

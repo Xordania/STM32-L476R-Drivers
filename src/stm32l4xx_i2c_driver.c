@@ -781,7 +781,7 @@ static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint8_t len){
 }
 
 
-void I2C_SlaveIntialization(I2C_Handle_t *pI2CHandle){
+void I2C_SlaveInitialization(I2C_Handle_t *pI2CHandle){
 	// Initial settings handled in I2C_Init()
 
 	// Set handle into slave mode
@@ -796,13 +796,13 @@ void I2C_SlaveIntialization(I2C_Handle_t *pI2CHandle){
 
 	// Clear OA1 before setting it
 	pI2CHandle->pI2Cx->OAR1 &= ~(0x3FF << I2Cx_OAR1_OA1);
-	pI2CHandle->pI2Cx->OAR1 |= (pI2CHandle->pI2Cx->OAR1 << I2Cx_OAR1_OA1);
+	pI2CHandle->pI2Cx->OAR1 |= (pI2CHandle->I2C_Config.I2C_OA1 << (I2Cx_OAR1_OA1 + 1));
 
 	// Clear OA2 before setting it
 	pI2CHandle->pI2Cx->OAR2 &= ~(0x3FF << I2Cx_OAR2_OA2);
-	pI2CHandle->pI2Cx->OAR2 |= (pI2CHandle->pI2Cx->OAR2 << I2Cx_OAR2_OA2);
+	pI2CHandle->pI2Cx->OAR2 |= (pI2CHandle->I2C_Config.I2C_OA2 << (I2Cx_OAR2_OA2 + 1));
 
-	// Enable OA1EN and OA2En
+	// Enable OA1EN and OA2EN
 	pI2CHandle->pI2Cx->OAR1 |= (ENABLE << I2Cx_OAR1_OA1EN);
 	pI2CHandle->pI2Cx->OAR2 |= (ENABLE << I2Cx_OAR2_OA2EN);
 
@@ -816,7 +816,7 @@ void I2C_SlaveSendData(I2C_RegDef_t *pI2C, uint8_t data){
 }
 
 uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C){
-	return (pI2C->RXNE & 0xf);
+	return (pI2C->RXDR & 0xf);
 }
 
 // A function that gets called whenver there in a match of address OA1 in slave mode
