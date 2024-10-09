@@ -10,6 +10,7 @@
 static void I2C_GenerateStartCondition(I2C_RegDef_t *pI2Cx, uint8_t addr, uint8_t RorW);
 static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint8_t len);
 static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle);
+static void I2C_SetHandleLink(I2C_Handle_t *pI2CHandle);
 
 uint16_t AHB_PreScaler[8] = {2, 4, 8, 16, 64, 128, 256, 512};
 uint8_t APB_PreScaler[4] = {2, 4, 8, 16};
@@ -651,17 +652,8 @@ void I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t
 	if((busystate != I2C_BUSY_IN_TX) && (busystate != I2C_BUSY_IN_RX)){
 
 		//2. Set the current I2C transmitting handle to the given handle
-		if(pI2CHandle->pI2Cx == I2C1){
-			pI2C1HandleLink = pI2CHandle;
-		}else if(pI2CHandle->pI2Cx == I2C2){
-			pI2C2HandleLink = pI2CHandle;
-		}else if(pI2CHandle->pI2Cx == I2C3){
-			pI2C3HandleLink = pI2CHandle;
-		}else{
-			// If the passed handle does not contain a proper pointer to an I2C register address
-			I2C_ApplicationEventCallback(pI2CHandle, I2C_EQ_INVALID_HANDLE);
-			return;
-		}
+		I2C_SetHandleLink(pI2CHandle);
+
 
 		//3. Populate the handle with the current transactions parameters
 		pI2CHandle->pTxBuffer = pTxBuffer;
@@ -677,7 +669,7 @@ void I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t
 		I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_WRITE);
 
 		//6. Turn the TCIE interrupt on
-		pI2C1HandleLink->pI2Cx->CR1 |= (ENABLE << I2Cx_CR1_TCIE);
+		pI2CHandle->pI2Cx->CR1 |= (ENABLE << I2Cx_CR1_TCIE);
 
 
 		//7. Check if this is the final transaction before the master is done with the slave
@@ -702,15 +694,7 @@ void I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint3
 	if((busystate != I2C_BUSY_IN_TX) && (busystate != I2C_BUSY_IN_RX)){
 
 		//2. Set the current I2C transmitting handle to the given handle
-		if(pI2CHandle->pI2Cx == I2C1){
-			pI2C1HandleLink = pI2CHandle;
-		}else if(pI2CHandle->pI2Cx == I2C2){
-			pI2C2HandleLink = pI2CHandle;
-		}else if(pI2CHandle->pI2Cx == I2C3){
-			pI2C3HandleLink = pI2CHandle;
-		}else{
-			I2C_ApplicationEventCallback(pI2CHandle, I2C_EQ_INVALID_HANDLE);
-		}
+		I2C_SetHandleLink(pI2CHandle);
 
 		//3. Populate the handle with the current transactions parameters
 		pI2CHandle->pRxBuffer = pRxBuffer;
@@ -726,7 +710,7 @@ void I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint3
 		I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_READ);
 
 		//6. Turn the TCIE interrupt on
-		pI2C1HandleLink->pI2Cx->CR1 |= (ENABLE << I2Cx_CR1_TCIE);
+		pI2CHandle->pI2Cx->CR1 |= (ENABLE << I2Cx_CR1_TCIE);
 
 		//7. Check if this is the final transaction before the master is done with the slave
 		if(pI2CHandle->Sr != 0){
@@ -774,6 +758,11 @@ static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint8_t len){
 void I2C_SlaveInitialization(I2C_Handle_t *pI2CHandle){
 	// Initial settings handled in I2C_Init()
 
+	// Set the current I2C transmitting handle given the handle
+	I2C_SetHandleLink(pI2CHandle);
+
+
+
 	// Set handle into slave mode
 	pI2CHandle->SorM = I2C_SLAVE_MODE;
 
@@ -810,6 +799,18 @@ void I2C_SlaveSendData(I2C_RegDef_t *pI2C, uint8_t data){
 
 uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C){
 	return (pI2C->RXDR & 0xf);
+}
+
+static void I2C_SetHandleLink(I2C_Handle_t *pI2CHandle){
+	if(pI2CHandle->pI2Cx == I2C1){
+		pI2C1HandleLink = pI2CHandle;
+	}else if(pI2CHandle->pI2Cx == I2C2){
+		pI2C2HandleLink = pI2CHandle;
+	}else if(pI2CHandle->pI2Cx == I2C3){
+		pI2C3HandleLink = pI2CHandle;
+	}else{
+		I2C_ApplicationEventCallback(pI2CHandle, I2C_EQ_INVALID_HANDLE);
+	}
 }
 
 // A function that gets called whenver there in a match of address OA1 in slave mode
