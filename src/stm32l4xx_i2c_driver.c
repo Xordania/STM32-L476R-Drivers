@@ -155,7 +155,7 @@ void I2C_Init(I2C_Handle_t *pI2CHandle){
 
 	tempreg = 0;
 	tempreg |= (pI2CHandle->I2C_Config.I2C_GCEN << I2Cx_CR1_GCEN);
-	pI2CHandle->pI2Cx->TIMINGR |= tempreg;
+	pI2CHandle->pI2Cx->CR1 |= tempreg;
 
 	// Configure register for slave mode
 	tempreg = 0;
@@ -443,6 +443,11 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 	// slave mode only
 	if(event_flag && control_bit){
 		//ADDR flag is set
+
+		// Turn off the ADDR Interrupt until the ADDCODE registers are empty, otherwise it just
+		// keeps triggering this function
+		pI2CHandle->pI2Cx->CR1 &= ~(ENABLE << I2Cx_CR1_ADDRIE);
+
 		if(pI2CHandle->I2C_Config.I2C_NOSTRECH){
 
 		}else{
