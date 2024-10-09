@@ -446,7 +446,7 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 
 		// Turn off the ADDR Interrupt until the ADDCODE registers are empty, otherwise it just
 		// keeps triggering this function
-		pI2CHandle->pI2Cx->CR1 &= ~(ENABLE << I2Cx_CR1_ADDRIE);
+		// pI2CHandle->pI2Cx->CR1 &= ~(ENABLE << I2Cx_CR1_ADDRIE);
 
 		if(pI2CHandle->I2C_Config.I2C_NOSTRECH){
 
@@ -474,7 +474,7 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 			}
 
 			// Clear the ADDRCF, doing this stops the clock being streched
-			pI2CHandle->pI2Cx->ICR &= (ENABLE << I2Cx_ICR_ADDRCF);
+			pI2CHandle->pI2Cx->ICR |= (ENABLE << I2Cx_ICR_ADDRCF);
 		}
 	}
 
@@ -799,11 +799,12 @@ void I2C_SlaveInitialization(I2C_Handle_t *pI2CHandle){
 }
 
 void I2C_SlaveSendData(I2C_RegDef_t *pI2C, uint8_t data){
-	pI2C->TXDR |= data;
+	// Clear the buffer before sending anything new
+	pI2C->TXDR = data;
 }
 
 uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2C){
-	return (pI2C->RXDR & 0xf);
+	return (pI2C->RXDR & 0xff);
 }
 
 static void I2C_SetHandleLink(I2C_Handle_t *pI2CHandle){
