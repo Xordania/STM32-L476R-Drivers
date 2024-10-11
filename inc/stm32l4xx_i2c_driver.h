@@ -42,7 +42,6 @@ typedef struct
 	uint32_t	 nReceived;		// Number of data packets received
 	uint32_t	 TxRxState;		// Is the MU currently transmitting or receiving
 	uint8_t		 DevAddr;		// Stores the address of the slave
-	uint32_t	 RxSize;		// Size of receiving data
 	uint8_t	 	 Sr;			// Repeated start value
 	uint8_t 	 SorM;			// Slave or Master
 
