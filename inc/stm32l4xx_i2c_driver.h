@@ -22,8 +22,11 @@ typedef struct
 	uint8_t	 I2C_PRESC;
 	uint8_t  I2C_ANFOFF;
 	uint8_t  I2C_DNF;
-	uint8_t  I2C_NOSTRECH;
-	uint8_t  I2C_GC;
+	uint8_t  I2C_NOSTRECH;		// No stech on slave mode
+	uint8_t  I2C_GCEN;			// General call enable
+	uint8_t	 I2C_SBC;			// Slave Byte Control
+	uint8_t	 I2C_OA1;			// Own Address 1 7-bit only
+	uint8_t  I2C_OA2;			// Own Address 2 7-bit only
 }I2C_Config_t;
 
 // Handle structure for I2Cx peripheral
@@ -38,9 +41,11 @@ typedef struct
 	uint32_t	 RxLen;			// Length of the Rx data
 	uint32_t	 nReceived;		// Number of data packets received
 	uint32_t	 TxRxState;		// Is the MU currently transmitting or receiving
-	uint8_t		 DevAddr;		// Stores the address of the slave or this device (as a slave)
-	uint32_t	 RxSize;		// Size of receiving data
-	uint8_t	  	 Sr;			// Repeated start value
+	uint8_t		 DevAddr;		// Stores the address of the slave
+	uint8_t	 	 Sr;			// Repeated start value
+	uint8_t 	 SorM;			// Slave or Master
+
+
 }I2C_Handle_t;
 
 // I2C SCL Speed contrl
@@ -55,6 +60,10 @@ typedef struct
 #define I2C_MASTER_WRITE 	0
 #define I2C_MASTER_READ 	1
 
+// I2C Slave start read write
+#define I2C_SLAVE_WRITE		0
+#define I2C_SLAVE_READ		1
+
 // I2C reload
 #define I2C_AUTOEND_TRUE 	1
 #define I2C_AUTOEND_FALSE 	0
@@ -63,6 +72,11 @@ typedef struct
 #define I2C_NOT_BUSY		0
 #define I2C_BUSY_IN_TX		1
 #define I2C_BUSY_IN_RX		2
+
+// Slave or Master states
+#define	I2C_NO_MODE			0
+#define I2C_SLAVE_MODE		1
+#define I2C_MASTER_MODE		2
 
 // I2C related status flags
 #define I2C_TXE_FLAG			(1 << I2Cx_ISR_TXE)
@@ -81,14 +95,20 @@ typedef struct
 #define I2C_BUSY_FLAG			(1 << I2Cx_ISR_BUSY)
 #define I2C_DIR_FLAG			(1 << I2Cx_ISR_DIR)
 
+
 // Application events
 
-#define I2C_EV_RX_FAILED		1
-#define I2C_EV_RX_CMPLT			2
-#define I2C_EV_TX_FAILED		3
-#define I2C_EV_TX_CMPLT			4
+#define I2C_EV_TX_FAILED		1
+#define I2C_EV_RX_FAILED		2
+#define I2C_EV_TX_CMPLT			3
+#define I2C_EV_RX_CMPLT			4
 #define I2C_EQ_INVALID_HANDLE	5
-#define I2C_EQ_BUSY				6
+#define I2C_EV_DATA_RCV			6
+#define I2C_EV_NACK				7
+#define I2C_EV_STOP				8
+#define I2C_EQ_BUSY				9
+#define I2C_EV_DATA_REQ			10
+
 //------------------------------------------------------------FUNCTION DEFINITIONS------------------------------------------------------------//
 
 // Peripheral clock set up
@@ -103,12 +123,18 @@ void I2C_DeInit(I2C_RegDef_t *pI2Cx);
 void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t slaveAddr);
 void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t slaveAddr);
 
+void I2C_SlaveInitialization(I2C_Handle_t *pI2CHandle);
 void I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t Len, uint8_t slaveAddr);
 void I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_t Len, uint8_t slaveAddr);
+
+void I2C_SlaveSendData(I2C_RegDef_t *pI2CHandle, uint8_t data);
+uint8_t I2C_SlaveReceiveData(I2C_RegDef_t *pI2CHandle);
 
 // IRQ Configuration and ISR handling
 void I2C_IRQInterruptControl(I2C_Handle_t *pI2CHandle, uint8_t EnOrDi);
 void I2C1_EV_IRQHandler();
+void I2C2_EV_IRQHandler();
+void I2C3_EV_IRQHandler();
 void I2C_ER_IRQHandling(I2C_Handle_t *pI2CHandle);
 void I2C_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 void I2C_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnorDi);
@@ -118,6 +144,10 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi);
 // Other peripheral Control APIs
 uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint32_t FlagName);
 uint8_t I2C_VerifyResponse(uint8_t ackByte);
+
+// Address matched slave callbacks
+void I2C_SlaveOA1MatchCallback(I2C_Handle_t *pI2CHandle);
+void I2C_SlaveOA2MatchCallback(I2C_Handle_t *pI2CHandle);
 
 // Aplication callback
 void I2C_ApplicationEventCallback(I2C_Handle_t *pI2CHandle, uint8_t AppEv);
