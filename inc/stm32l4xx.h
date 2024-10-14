@@ -609,7 +609,134 @@ typedef struct{
 #define I2Cx_ICR_PECCF			11  // PEC error flag clear
 #define I2Cx_ICR_TIMOUTCF		12	// Timeout detection flag clear
 
+//---------------------------------MACROS FOR UART/USART BIT POSITIONS---------------------------------------------
+#define USARTx_CR1_UE			0 	// USART enable
+#define USARTx_CR1_UESM			1   // USART enable in Stop mode
+#define USARTx_CR1_RE			2   // Reciever enable
+#define USARTx_CR1_TE			3   // Transmitter enable
+#define USARTx_CR1_IDLEIE		4   // IDLE interrupt enable
+#define USARTx_CR1_RXNEIE		5   // RXNE interrupt enable
+#define USARTx_CR1_TXEIE		6   // Transmission complete interrupt enable
+#define USARTx_CR1_TCIE			7   // Interrupt enable
+#define USARTx_CR1_PEIE			8   // Interrupt enable
+#define USARTx_CR1_PS			9   // Parity selection
+#define USARTx_CR1_PCE			10  // Parity control enable
+#define USARTx_CR1_WAKE			11  // Receiver wakeup method
+#define USARTx_CR1_M0			12  // World length
+#define USARTx_CR1_MME			13  // Mute mode enable
+#define USARTx_CR1_CMIE			14  // Character match interrupt enable
+#define USARTx_CR1_OVER8		15  // Oversampling mode
+#define USARTx_CR1_DEDT0		16  // Driver enable de-assertion time
+#define USARTx_CR1_DEDT1		17  // Driver enable de-assertion time
+#define USARTx_CR1_DEDT2		18  // Driver enable de-assertion time
+#define USARTx_CR1_DEDT3		19  // Driver enable de-assertion time
+#define USARTx_CR1_DEDT4		20  // Driver enable de-assertion time
+#define USARTx_CR1_DEAT0		21  // Driver enable assertion time
+#define USARTx_CR1_DEAT1		22  // Driver enable assertion time
+#define USARTx_CR1_DEAT2		23  // Driver enable assertion time
+#define USARTx_CR1_DEAT3		24  // Driver enable assertion time
+#define USARTx_CR1_DEAT4		15  // Driver enable assertion time
+#define USARTx_CR1_RTOIE		16  // Receiver timeout interrupt enable
+#define USARTx_CR1_EOBIE		27  // End of block interrupt software
+#define USARTx_CR1_M1			28  // Word length
 
+#define USARTx_CR2_ADDM7		4   // 7-bit address detection/4-bit address detection
+#define USARTx_CR2_LBL			5   // LIN break detection length
+#define USARTx_CR2_LBDIE		6   // LIN break detection interrupt enable
+#define USARTx_CR2_LBCL			8   // Last bit clock pulse
+#define USARTx_CR2_CPHA			9   // Clock phase
+#define USARTx_CR2_CPOL			10  // Clock polarity
+#define USARTx_CR2_CLKEN		11  // Clock enable
+#define USARTx_CR2_STOP			12  // STOP bits
+#define USARTx_CR2_LINEN		14  // LIN mode enable
+#define USARTx_CR2_SWAP			15  // Swap TX/RX pins
+#define USARTx_CR2_RXINV		16  // RX pin active lebel inversion
+#define USARTx_CR2_TXINV		17  // TX pin active level inversion
+#define USARTx_CR2_DATAINV		18  // Binary data inversion
+#define USARTx_CR2_MSBFIRST		19  // Most significatn bit first
+#define USARTx_CR2_ABREN		20  // Auto baud rate enable
+#define USARTx_CR2_ABRMOD0		21  // Auto baud rate mode
+#define USARTx_CR2_ABRMOD1		22  // Auto baud rate mode
+#define USARTx_CR2_RTOEN		23  // Receiver timeout enable
+#define USARTx_CR2_ADD			24  // Address of the USART node
+
+#define USARTx_CR3_EIE			0   // Error interrupt enable
+#define USARTx_CR3_IREN			1   // IrDA mode enable
+#define USARTx_CR3_IRLP			2   // IrDA low-power
+#define USARTx_CR3_HDSEL		3   // Half-duplex selection
+#define USARTx_CR3_NACK			4   // Smartcard NACK enable
+#define USARTx_CR3_SCEN			5   // Smartcard mode enable
+#define USARTx_CR3_DMAR			6   // DMA enable receiver
+#define USARTx_CR3_DMAT			7   // DMA enable transmitter
+#define USARTx_CR3_RTSE			8   // RTS enable
+#define USARTx_CR3_CTSE			9   // CTS enable
+#define USARTx_CR3_CTSIE		10  // CTS interrupt enable
+#define USARTx_CR3_ONEBIT		11  // One sample bit method enable
+#define USARTx_CR3_OVRDIS		12  // Overrun disable
+#define USARTx_CR3_DDRE			13  // DMA disable on reception error
+#define USARTx_CR3_DEM			14  // Driver enable mode
+#define USARTx_CR3_DEP			15  // Driver enable polairty selection
+#define USARTx_CR3_SCARNT		17  // Smartcard auto-retry count
+#define USARTx_CR3_WUS			20  // Wakeup from stop mode interrupt flag selection
+#define USARTx_CR3_WUFIE		22  // Wakeup from stop mode interrupt enable
+#define USARTx_CR3_UCESM		23  // USART clock enable in stop mode
+#define USARTx_CR3_TCBGTIE		24  // Tranmsission complete before guard time interrupt enable
+
+#define USARTx_BRR_BRR			0   // Baud rate reigster
+
+#define USARTx_GTPR_PSC			0   // Prescaler value
+#define USARTx_GTPR_GT			7   // Guard time value
+
+#define USARTx_RTOR_RTO			0   // Receiver timeout value
+#define USARTx_GTPR_BLEN		23  // Bock length
+
+#define USARTx_RQR_ABRRQ		0   // Auto baud rate request
+#define USARTx_RQR_SBKRQ		1   // Send break request
+#define USARTx_RQR_MMRQ			2   // Mute mode request
+#define USARTx_RQR_RXFRQ		3   // Recieve data flush request
+#define USARTx_RQR_TXFRQ		4   // Transmit data flush request
+
+#define USARTx_ISR_PE			0   // Parity error
+#define USARTx_ISR_FE			1   // Framing error
+#define USARTx_ISR_NF			2   // START bit noise deteciton flag
+#define USARTx_ISR_ORE			3   // Overrun error
+#define USARTx_ISR_IDLE			4   // Idle line deteceted
+#define USARTx_ISR_RXNE			5   // Read data register not empty
+#define USARTx_ISR_TC			6   // Transmission complete
+#define USARTx_ISR_TXE			7   // Transmit data register empty
+#define USARTx_ISR_LBDF			8   // LIN break detection flag
+#define USARTx_ISR_CTSIF		9   // CTS interrupt flag
+#define USARTx_ISR_CTS			10  // CTS flag
+#define USARTx_ISR_RTOF			11  // Receiver timeout
+#define USARTx_ISR_EOBF			12  // End of block flag
+#define USARTx_ISR_ABRE			14  // Auto baud rate error
+#define USARTx_ISR_ABRF			15  // Auto baud rate flag
+#define USARTx_ISR_BUST			16  // Busy flag
+#define USARTx_ISR_CMF			17  // Character match flag
+#define USARTx_ISR_SBKF			18  // Send breakflag
+#define USARTx_ISR_RWU			19  // Receive wakeup from mute mode
+#define USARTx_ISR_WUF			20  // Wakeup from stop mode flag
+#define USARTx_ISR_TEACK		21  // Transmit enable acknowledge flag
+#define USARTx_ISR_REACK		22  // Receive enable acknowledge flag
+#define USARTx_ISR_TCBGT		25  // Transmission compelte before guard time completion
+
+#define USARTx_ICR_PECF			0   // Parity error clear flag
+#define USARTx_ICR_FECF			1   // Framing error clear flag
+#define USARTx_ICR_NCF			2   // Noise deteceted clear flag
+#define USARTx_ICR_ORECF		3   // Overrun error clear flag
+#define USARTx_ICR_IDLECF		4   // Idle line detected clear flag
+#define USARTx_ICR_TCCF			6   // Transmission complete clear flag
+#define USARTx_ICR_TCBGTCF		7   // Transmission completed before guard clear flag
+#define USARTx_ICR_LBDCF		8   // LIN break detection clear glag
+#define USARTx_ICR_CTSCF		9   // CTS clear glag
+#define USARTx_ICR_RTOCF		11  // Receiver imeout clear flag
+#define USARTx_ICR_EOBCF		12  // End of block clear flag
+#define USARTx_ICR_CMCF			17  // Character match clear flag
+#define USARTx_ICR_WUCF			20  // Wakeup from stop mode clear flag
+
+#define USARTx_RDR_RDR			0   // Receive data value
+
+#define USARTx_TDR_TDR			0   // Transmit data value
 
 #include "stm32l4xx_gpio_driver.h"
 #include "stm32l4xx_spi_driver.h"
