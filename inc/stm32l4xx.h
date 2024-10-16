@@ -680,7 +680,6 @@ typedef struct{
 #define USARTx_CR3_WUS			20  // Wakeup from stop mode interrupt flag selection
 #define USARTx_CR3_WUFIE		22  // Wakeup from stop mode interrupt enable
 #define USARTx_CR3_UCESM		23  // USART clock enable in stop mode
-#define USARTx_CR3_TCBGTIE		24  // Tranmsission complete before guard time interrupt enable
 
 #define USARTx_BRR_BRR			0   // Baud rate reigster
 
@@ -718,7 +717,6 @@ typedef struct{
 #define USARTx_ISR_WUF			20  // Wakeup from stop mode flag
 #define USARTx_ISR_TEACK		21  // Transmit enable acknowledge flag
 #define USARTx_ISR_REACK		22  // Receive enable acknowledge flag
-#define USARTx_ISR_TCBGT		25  // Transmission compelte before guard time completion
 
 #define USARTx_ICR_PECF			0   // Parity error clear flag
 #define USARTx_ICR_FECF			1   // Framing error clear flag
@@ -726,7 +724,6 @@ typedef struct{
 #define USARTx_ICR_ORECF		3   // Overrun error clear flag
 #define USARTx_ICR_IDLECF		4   // Idle line detected clear flag
 #define USARTx_ICR_TCCF			6   // Transmission complete clear flag
-#define USARTx_ICR_TCBGTCF		7   // Transmission completed before guard clear flag
 #define USARTx_ICR_LBDCF		8   // LIN break detection clear glag
 #define USARTx_ICR_CTSCF		9   // CTS clear glag
 #define USARTx_ICR_RTOCF		11  // Receiver imeout clear flag
