@@ -260,6 +260,22 @@ typedef struct{
 	__vo uint32_t TXDR;				// I2C transmit data register
 }I2C_RegDef_t;
 
+// Register defintion for USARTx peripheral
+typedef struct{
+	uint32_t CR1;					// USART control register 1
+	uint32_t CR2;					// USART control register 2
+	uint32_t CR3;					// USART control register 3
+	uint32_t BRR;					// USART baud Rate Register
+	uint32_t GTPR;					// USART guard time and prescaler register
+	uint32_t RTOR;					// USART receiver timeout register
+	uint32_t RQR;					// USART request register
+	uint32_t ISR;					// USART interrupt and status register
+	uint32_t ICR;					// USART interrupt flag clear register
+	uint32_t RDR;					// USART receive data register
+	uint32_t TDR;					// USART transmit data register
+}USART_RegDef_t;
+
+
 #define GPIOA ((GPIO_RegDef_t*)GPIOA_BASEADDR)
 #define GPIOB ((GPIO_RegDef_t*)GPIOB_BASEADDR)
 #define GPIOC ((GPIO_RegDef_t*)GPIOC_BASEADDR)
@@ -280,6 +296,12 @@ typedef struct{
 #define I2C1 ((I2C_RegDef_t*)I2C1_BASEADDR)
 #define I2C2 ((I2C_RegDef_t*)I2C2_BASEADDR)
 #define I2C3 ((I2C_RegDef_t*)I2C3_BASEADDR)
+
+#define USART1 	((USART_RegDef_t *)USART1_BASEADDR)
+#define USART2 	((USART_RegDef_t *)USART2_BASEADDR)
+#define USART3 	((USART_RegDef_t *)USART3_BASEADDR)
+#define UART4 	((USART_RegDef_t *)UART4_BASEADDR)
+#define UART5 	((USART_RegDef_t *)UART5_BASEADDR)
 
 
 //---------------------------------Clock enable macros for different peripherals---------------------------------------------
@@ -313,6 +335,8 @@ typedef struct{
 #define USART1_PCLK_EN() (RCC -> APB2ENR |= (1 << 14))
 #define USART2_PCLK_EN() (RCC -> APB1ENR1 |= (1 << 17))
 #define USART3_PCLK_EN() (RCC -> APB1ENR1 |= (1 << 18))
+#define UART4_PCLK_EN() (RCC -> APB1ENR1 |= (1 << 19))
+#define UART5_PCLK_EN() (RCC -> APB1ENR1 |= (1 << 20))
 
 // Clock enable macros for SYSCFGx peripheral
 
@@ -347,6 +371,8 @@ typedef struct{
 #define USART1_PCLK_DI() (RCC -> APB2ENR &= ~(1 << 14))
 #define USART2_PCLK_DI() (RCC -> APB1ENR1 &= ~(1 << 17))
 #define USART3_PCLK_DI() (RCC -> APB1ENR1 &= ~(1 << 18))
+#define UART4_PCLK_DI() (RCC -> APB1ENR1 &= ~(1 << 19))
+#define UART5_PCLK_DI() (RCC -> APB1ENR1 &= ~(1 << 20))
 
 // Clock disable macros for SYSCFGx peripheral
 

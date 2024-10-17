@@ -186,8 +186,6 @@ uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint32_t FlagName)
 
 
 void I2C_IRQInterruptControl(I2C_Handle_t *pI2CHandle, uint8_t EnOrDi){
-	// Initialise all of the I2C interrupts
-
 	// Put a 1 in all of the interrupt activate bits
 	if(EnOrDi == ENABLE){
 		pI2CHandle->pI2Cx->CR1 |= (0x7F << ENABLE);
