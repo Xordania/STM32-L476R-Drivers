@@ -50,6 +50,49 @@ typedef struct{
 #define USARTx_TEACK_FLAG 	(1 << USARTx_ISR_TEACK)
 #define USARTx_REACK_FLAG 	(1 << USARTx_ISR_REACK)
 
+
+// USART Modes
+#define USART_MODE_ONLY_RX 	1
+#define USART_MODE_ONLY_TX	2
+#define USART_MODE_TXRX		3
+
+// USART Baud rates
+#define USART_STD_BAUD_1200		1200
+#define USART_STD_BAUD_2400		2400
+#define USART_STD_BAUD_9600		9600
+#define USART_STD_BAUD_19200	19200
+#define USART_STD_BAUD_38400	38400
+#define USART_STD_BAUD_57600	57600
+#define USART_STD_BAUD_115200	115200
+#define USART_STD_BAUD_230400	230400
+#define USART_STD_BAUD_460800	460800
+#define USART_STD_BAUD_921600	921600
+#define USART_STD_BAUD_2MHZ		2000000
+#define USART_STD_BAUD_3MHZ		3000000
+#define USART_STD_BAUD_4MHZ		4000000
+
+// USART Parity Control
+#define USART_PARITY_EN_EVEN	0
+#define USART_PARITY_EN_ODD		1
+#define USART_PARITY_DISABLE	2
+
+// USART word length
+#define USART_WORDLEN_7BITS		0
+#define USART_WORDLEN_8BITS		1
+#define USART_WORDLEN_9BITS		2
+
+// USART Number of stop bits
+#define USART_STOPBITS_1		0
+#define USART_STOPBITS_0_5		1
+#define USART_STOPBITS_2		2
+#define USART_STOPBITS_1_5		3
+
+// USART HW Flow Contrl
+#define USART_HW_FLOW_CTRL_NONE		0
+#define USART_HW_FLOW_CTRL_RTS		1
+#define USART_HW_FLOW_CTRL_CTS		2
+#define USART_HW_FLOW_CTRL_CTS_RTS	3
+
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 
 void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
@@ -59,5 +102,9 @@ void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint8_t FlagName);
 
 void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi);
 void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
+
+void USART_Init(USART_Handle_t *pUSARTHandle);
+
+void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t AppEv);
 
 #endif /* STM32_L476R_DRIVERS_INC_STM32L4XX_USART_DRIVER_H_ */

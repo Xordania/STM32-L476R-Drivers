@@ -104,3 +104,53 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority){
     uint8_t shift_amount = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
     *(NVIC_PR_BASEADDR + iprx) |= (IRQPriority << shift_amount);
 }
+
+void USART_Init(USART_Handle_t *pUSARTHandle){
+	// Temporary variable
+	uint32_t tempreg = 0;
+
+	/********************** Configure CR1 Register **********************/
+
+	// Intialize the clock to the given USART peripheral
+	USART_PeriClockControl(pUSARTHandle->pUSARTx, ENABLE);
+
+	// Enable USART Tx and Rx enginees according to the USART Mode configuration
+	// The mode macros are set such that the correct values will be placed in the RE and TE registers
+	tempreg |= (pUSARTHandle->USART_Config.USART_Mode << USARTx_CR1_RE);
+
+	// Configure the word length register
+	// If eight bit word length is selected both M0 and M1 stay empty
+	if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_7BITS){
+		tempreg |= (ENABLE << USARTx_CR1_M1);
+	}else if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_9BITS){
+		tempreg |= (ENABLE << USARTx_CR1_M0);
+	}
+
+	// Configure the parity control registers
+	if(pUSARTHandle->USART_Config.USART_ParityControl != USART_PARITY_DISABLE){
+		tempreg |= (ENABLE << USARTx_CR1_PCE);
+		tempreg |= (pUSARTHandle->USART_Config.USART_ParityControl << USARTx_CR1_PS);
+	}
+
+	pUSARTHandle->pUSARTx->CR1 |= tempreg;
+	tempreg = 0;
+
+	/********************** Configure CR2 Register **********************/
+
+	// Configure number of stop bits during a USART frame transmission
+	tempreg |= (pUSARTHandle->USART_Config.USART_NoOfStopBits << USARTx_CR2_STOP);
+
+	pUSARTHandle->pUSARTx->CR2 |= tempreg;
+	tempreg = 0;
+	/********************** Configure CR3 Register **********************/
+
+	// Configure USART hardware flow control
+	// The hardware control macros are set such that the correct values will be placed in the RTSE and CTSE registers
+	tempreg |= (pUSARTHandle->USART_Config.USART_HWFlowContro << USARTx_CR3_RTSE);
+
+	pUSARTHandle->pUSARTx->CR3 |= tempreg;
+
+	/********************** Configure BRR Register **********************/
+
+
+}
