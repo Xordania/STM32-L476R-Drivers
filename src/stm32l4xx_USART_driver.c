@@ -146,11 +146,63 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 
 	// Configure USART hardware flow control
 	// The hardware control macros are set such that the correct values will be placed in the RTSE and CTSE registers
-	tempreg |= (pUSARTHandle->USART_Config.USART_HWFlowContro << USARTx_CR3_RTSE);
+	tempreg |= (pUSARTHandle->USART_Config.USART_HWFlowControl << USARTx_CR3_RTSE);
 
 	pUSARTHandle->pUSARTx->CR3 |= tempreg;
 
 	/********************** Configure BRR Register **********************/
+}
 
+
+void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
+	uint16_t *pdata;
+
+	// Loop over until "Len" number of bytes have been transferred
+	for(uint32_t i = 0; i < Len; i++){
+		// Wait until the TXE flag is set in the SR
+		while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TXE_FLAG));
+
+		// Check if the USART wordlength is 7, 8 or 9 bits
+		if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_7BITS){
+			// Load the data into the Transfer Data Register (mask the last bit as 0)
+			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0xFE);
+
+			pTxBuffer++;
+		}else if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_8BITS){
+			// Load the data into the Transfer Data Register
+			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0xFF);
+
+			pTxBuffer++;
+		}else{
+			// If 9 bit wordlength load the DR with a 2 byte masking that is 0 for any except the first 9 bits
+			pdata = (uint16_t*)pTxBuffer;
+
+			// Load the data into the Transfer Data Register
+			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0x01FF);
+
+			pTxBuffer++;
+
+			// If the parity check is not disabled 9 bits of user data will be sent therefore the TxBuffer must
+			// be incremented twice. Otherwise only 8 bits will be sent and the buffer incremented once (done above)
+			// as the 9th bit will be the parity bit
+			if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE){
+				pTxBuffer++;
+			}
+
+		}
+	}
+}
+
+void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
 
 }
+
+uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
+	return 0;
+}
+
+uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
+	return 0;
+}
+
+
