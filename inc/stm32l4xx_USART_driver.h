@@ -93,17 +93,24 @@ typedef struct{
 #define USART_HW_FLOW_CTRL_CTS		2
 #define USART_HW_FLOW_CTRL_CTS_RTS	3
 
+// Peripheral clock set up
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 
+// USART control
 void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 
+// USART Init
+void USART_Init(USART_Handle_t *pUSARTHandle);
+
+// Flag statuses
 uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint8_t FlagName);
 void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint8_t FlagName);
 
+// IRQ configration and ISR handling
 void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi);
 void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 
-void USART_Init(USART_Handle_t *pUSARTHandle);
+
 
 void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t AppEv);
 
