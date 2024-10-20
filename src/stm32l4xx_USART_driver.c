@@ -263,7 +263,21 @@ void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_
 	}
 }
 
-uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
+uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
+	uint8_t txstate = pUSARTHandle->TxBusyState;
+
+	if(txstate == USART_NOT_BUSY_IN_TX){
+		pUSARTHandle->TransmitLen = Len;
+		pUSARTHandle->pTxBuffer = pTxBuffer;
+		pUSARTHandle->TxBusyState = USART_BUSY_IN_TX;
+
+		// Enable the interrupt for TXE
+		pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TXEIE);
+
+		// Enable the interrupt for TC
+		pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TCIE);
+	}
+
 	return 0;
 }
 

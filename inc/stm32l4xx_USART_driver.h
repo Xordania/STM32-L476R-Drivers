@@ -24,6 +24,12 @@ typedef struct{
 typedef struct{
 	USART_RegDef_t *pUSARTx;
 	USART_Config_t USART_Config;
+	uint8_t *pTxBuffer;
+	uint8_t *pRxBuffer;
+	uint8_t TxBusyState;
+	uint8_t RxBusyState;
+	uint32_t TransmitLen;
+	uint32_t ReceiveLen;
 }USART_Handle_t;
 
 // USART related status flags
@@ -93,6 +99,14 @@ typedef struct{
 #define USART_HW_FLOW_CTRL_CTS		2
 #define USART_HW_FLOW_CTRL_CTS_RTS	3
 
+// USART Transmit States
+#define USART_NOT_BUSY_IN_TX	0
+#define USART_BUSY_IN_TX 		1
+
+// USART Receive States
+#define USART_NOT_BUSY_IN_RX	0
+#define USART_BUSY_IN_RX		1
+
 // Peripheral clock set up
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 
@@ -113,7 +127,7 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 // Send and receive data
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len);
 void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
-uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
+uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len);
 uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);
 
 // Application callback
