@@ -195,6 +195,72 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 
 void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
 
+	// Loop over until "Len" number of bytes have been transferred
+	// Incrementing of RxBuffer done as the last instruction
+	for(uint32_t i = 0; i < Len; i++){
+		// Wait until the RXNE flag is set in the SR
+		while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_RXNE_FLAG));
+
+		// Check if the USART wordlength is 7, 8 or 9 bits
+		if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_7BITS){
+
+			// Check the parity bit setting
+			if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE){
+				// We are receiving 7 bits of data
+
+				// Read the first 7 bits of data. Mask: 0x7F
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->RDR & (uint16_t)0x7F);
+			}else{
+				// We are receiving 6 bits of data and a parity bit
+
+				// Read the first 6 bits of data. Mask: 0x3F
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->RDR & (uint16_t)0x3F);
+
+			}
+
+		}else if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_8BITS){
+
+			// Check the parity bit setting
+			if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE){
+				// We are receiving 8 bits of data
+
+				// Read the first 8 bits of data. Mask: 0xFF
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->RDR & (uint16_t)0xFF);
+
+
+			}else{
+				// We are receiving 7 bits of data and a parity bit
+
+				// Read the first 7 bits of data. Mask: 0x7F
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->RDR & (uint16_t)0x7F);
+
+			}
+
+		}else{
+
+			// Check the parity bit setting
+			if(pUSARTHandle->USART_Config.USART_ParityControl == USART_PARITY_DISABLE){
+				// We are receiving 9 bits of data
+
+				// Read the first 9 bits of data. Mask: 0x01FF
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->RDR & (uint16_t)0x01FF);
+
+				// The RxBuffer has to be incremented twice as more than one byte of data is received
+				// Second increment done beneath the if else chain
+				pRxBuffer++;
+
+			}else{
+				// We are receiving 8 bits of data and a parity bit
+
+				// Read the first 8 bits of data. Mask: 0xFF
+				*((uint16_t*)pRxBuffer) = (pUSARTHandle->pUSARTx->RDR & (uint16_t)0xFF);
+
+			}
+		}
+
+		// Increment the RxBuffer
+		pRxBuffer++;
+	}
 }
 
 uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
