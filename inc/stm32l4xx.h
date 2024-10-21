@@ -766,6 +766,8 @@ typedef struct{
 #include "stm32l4xx_spi_driver.h"
 #include "stm32l4xx_i2c_driver.h"
 #include "stm32l4xx_USART_driver.h"
+#include "stm32l4xx_rcc_driver.h"
+
 
 
 #endif /* INC_STM32L4XX_H_ */

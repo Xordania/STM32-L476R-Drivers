@@ -151,6 +151,7 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 	pUSARTHandle->pUSARTx->CR3 |= tempreg;
 
 	/********************** Configure BRR Register **********************/
+	USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baud);
 }
 
 
