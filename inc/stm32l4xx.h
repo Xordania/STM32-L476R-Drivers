@@ -379,6 +379,7 @@ typedef struct{
 #define SYSCFG_PCLK_DI() (RCC -> APB2ENR &= ~(1 << 0))
 
 
+
 //---------------------------------Macros to reset GPIOs---------------------------------------------
 #define GPIOA_REG_RESET() 			do{(RCC -> AHB2RSTR |= (1 << 0));	(RCC -> AHB2RSTR &= ~(1 << 0)); }while(0)
 #define GPIOB_REG_RESET() 			do{(RCC -> AHB2RSTR |= (1 << 1));	(RCC -> AHB2RSTR &= ~(1 << 1)); }while(0)
