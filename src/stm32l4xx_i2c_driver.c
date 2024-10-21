@@ -12,10 +12,6 @@ static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint32_t len);
 static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle);
 static void I2C_SetHandleLink(I2C_Handle_t *pI2CHandle);
 
-uint16_t AHB_PreScaler[8] = {2, 4, 8, 16, 64, 128, 256, 512};
-uint8_t APB_PreScaler[4] = {2, 4, 8, 16};
-
-uint32_t MSI_RANGES[12] = {MSI_RANGE_0, MSI_RANGE_1, MSI_RANGE_2, MSI_RANGE_3, MSI_RANGE_4, MSI_RANGE_5,MSI_RANGE_6, MSI_RANGE_7, MSI_RANGE_8, MSI_RANGE_9, MSI_RANGE_10, MSI_RANGE_11};
 
 I2C_Handle_t *pI2C1HandleLink;
 I2C_Handle_t *pI2C2HandleLink;

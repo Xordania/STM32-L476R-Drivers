@@ -312,8 +312,10 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate){
 	// Get the value of APB bus clock and store it in the PCLKx variable
 	if(pUSARTx == USART1){
 		// Get APB2 clock
+		PCLKx = RCC_GetPCLK2Value();
 	}else{
 		// Get APB1 clock
+		PCLKx = RCC_GetPCLK1Value();
 	}
 
 	// Check for the OVER8 configuration bit

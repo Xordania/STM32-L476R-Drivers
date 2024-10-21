@@ -11,5 +11,6 @@
 #include "stm32l4xx.h"
 
 uint32_t RCC_GetPCLK1Value(void);
+uint32_t RCC_GetPCLK2Value(void);
 
 #endif /* STM32_L476R_DRIVERS_INC_STM32L4XX_RCC_DRIVER_H_ */
