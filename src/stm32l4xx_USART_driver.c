@@ -297,4 +297,66 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
 	return rxstate;
 }
 
+void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate){
+
+	// Variable to hold the APB clock
+	uint32_t PCLKx;
+
+	uint32_t usartdiv;
+
+	// Varaiables to hold Mantissa and Fraction values
+	uint32_t M_part, F_part;
+
+	uint32_t tempreg = 0;
+
+	// Get the value of APB bus clock and store it in the PCLKx variable
+	if(pUSARTx == USART1){
+		// Get APB2 clock
+	}else{
+		// Get APB1 clock
+	}
+
+	// Check for the OVER8 configuration bit
+	if(pUSARTx->CR1 & (1 << USARTx_CR1_OVER8)){
+		// OVER8 enabled, sampling by 8
+
+		// The 25 come from the fact that we multiply the original (f/(8*BR)) equation by 100 to
+		// turn any decimal points into whole numbers so they can later be broken in mantissa and
+		// fraction parts
+		usartdiv = ((25 * PCLKx) / (2 * BaudRate));
+
+	}else{
+		// OVER8 disanble, sampling by 16
+		// The 25 come from the fact that we multiply the original (f/(16*BR)) equation by 100 to
+		// turn any decimal points into whole numbers so they can later be broken in mantissa and
+		// fraction parts
+		usartdiv = ((25 * PCLKx) / (4 * BaudRate));
+	}
+
+	// Calculate the mantissa and first fractional part
+	M_part = usartdiv/100;
+	F_part = usartdiv - (M_part * 100);
+
+	// Calculate the final fractional
+	if(pUSARTx->CR1 & (1 << USARTx_CR1_OVER8)){
+		// OVER8 enabled, sampling by 8
+
+		// +50 so that the extracted number is rounded to the correct place (extracting an integer
+		// from a float alway rounds down in C, so we do the rounding ourselves)
+		F_part = (((F_part * 8) + 50)/100) &((uint8_t) 0x07);
+
+		// For a sampling of 8 the fractional value must be bit-shifted to the left 1
+		F_part = F_part << 1;
+	}else{
+		// OVER8 disanble, sampling by 16
+		F_part = (((F_part * 16) + 50)/100) &((uint8_t) 0x0F);
+	}
+
+	// Shift the mantissa to the correct part of the BRR
+	tempreg |= (M_part << 4);
+	tempreg |= F_part;
+
+	pUSARTx->BRR |= tempreg;
+}
+
 
