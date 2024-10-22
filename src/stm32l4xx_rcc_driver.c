@@ -58,7 +58,7 @@ uint32_t RCC_GetPCLK1Value(void){
 	// Get the register value that defines the APB1 pre-scaler
 	temp = (RCC->CFGR >> 8) & 0x7;
 
-	if(temp > 4){
+	if(temp < 4){
 		apb = 1;
 	}else{
 		apb = APB_PreScaler[temp - 4];
