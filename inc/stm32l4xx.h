@@ -448,9 +448,6 @@ typedef struct{
 #define NVIC_IRQ_PRI14 		14
 #define NVIC_IRQ_PRI15 		15
 
-
-
-
 #define MSI_RANGE_0 		100000U
 #define MSI_RANGE_1			200000U
 #define MSI_RANGE_2			400000U
