@@ -157,6 +157,7 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
 	uint16_t *pdata;
+	pdata = (uint16_t*)pTxBuffer;
 
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
@@ -176,7 +177,6 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 			pTxBuffer++;
 		}else{
 			// If 9 bit wordlength load the DR with a 2 byte masking that is 0 for any except the first 9 bits
-			pdata = (uint16_t*)pTxBuffer;
 
 			// Load the data into the Transfer Data Register
 			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0x01FF);
