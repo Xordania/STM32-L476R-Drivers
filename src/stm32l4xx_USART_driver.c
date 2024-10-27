@@ -114,10 +114,6 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 	// Intialize the clock to the given USART peripheral
 	USART_PeriClockControl(pUSARTHandle->pUSARTx, ENABLE);
 
-	// Enable USART Tx and Rx enginees according to the USART Mode configuration
-	// The mode macros are set such that the correct values will be placed in the RE and TE registers
-	tempreg |= (pUSARTHandle->USART_Config.USART_Mode << USARTx_CR1_RE);
-
 	// Configure the word length register
 	// If eight bit word length is selected both M0 and M1 stay empty
 	if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_7BITS){
@@ -159,9 +155,12 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 	uint16_t *pdata;
 	pdata = (uint16_t*)pTxBuffer;
 
+	// Write the TE bit in CR1 to high to send an idle frame as the first transmission
+	pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TE);
+
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
-		// Wait until the TXE flag is set in the SR
+		// Wait until the TXE flag is set in the ISR
 		while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TXE_FLAG));
 
 		// Check if the USART wordlength is 7, 8 or 9 bits
@@ -329,7 +328,7 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate){
 		usartdiv = ((25 * PCLKx) / (2 * BaudRate));
 
 	}else{
-		// OVER8 disanble, sampling by 16
+		// OVER8 disable, sampling by 16
 		// The 25 come from the fact that we multiply the original (f/(16*BR)) equation by 100 to
 		// turn any decimal points into whole numbers so they can later be broken in mantissa and
 		// fraction parts

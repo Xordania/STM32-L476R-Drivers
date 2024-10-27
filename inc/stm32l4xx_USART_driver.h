@@ -18,6 +18,7 @@ typedef struct{
 	uint8_t USART_WordLength;
 	uint8_t USART_ParityControl;
 	uint8_t USART_HWFlowControl;
+	uint8_t USART_DMAEnabled;
 }USART_Config_t;
 
 // Handle structure for USARTx peripheral
@@ -106,6 +107,10 @@ typedef struct{
 // USART Receive States
 #define USART_NOT_BUSY_IN_RX	0
 #define USART_BUSY_IN_RX		1
+
+// DMA Enable states
+#define USART_DMA_DISABLE	1
+#define USART_DMA_ENABLE  	0
 
 // Peripheral clock set up
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
