@@ -123,7 +123,7 @@ void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 void USART_Init(USART_Handle_t *pUSARTHandle);
 
 // Flag statuses
-uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint8_t FlagName);
+uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint32_t FlagName);
 void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint8_t FlagName);
 
 // IRQ configration and ISR handling

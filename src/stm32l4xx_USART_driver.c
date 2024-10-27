@@ -46,7 +46,7 @@ void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi){
 }
 
 
-uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint8_t FlagName){
+uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint32_t FlagName){
 	if(pUSARTx->ISR & FlagName){
 		return FLAG_SET;
 	}
@@ -162,6 +162,7 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 	uint16_t *pdata;
 	pdata = (uint16_t*)pTxBuffer;
 
+	while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TEACK_FLAG));
 
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
@@ -176,7 +177,7 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 			pTxBuffer++;
 		}else if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_8BITS){
 			// Load the data into the Transfer Data Register
-			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0xFF);
+			pUSARTHandle->pUSARTx->TDR = (*pdata & 0xFF);
 
 			pTxBuffer++;
 		}else{
