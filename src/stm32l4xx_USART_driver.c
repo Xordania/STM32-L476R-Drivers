@@ -162,8 +162,8 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 	uint16_t *pdata;
 
 	// Clear TC flag
+	pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
 
-	while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TEACK_FLAG));
 
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
@@ -198,6 +198,10 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 
 		}
 	}
+
+	// Wait for TC flag to be set
+	while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TC_FLAG));
+
 }
 
 void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len){
