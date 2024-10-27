@@ -160,7 +160,8 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
 	uint16_t *pdata;
-	pdata = (uint16_t*)pTxBuffer;
+
+	// Clear TC flag
 
 	while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TEACK_FLAG));
 
@@ -172,17 +173,17 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 		// Check if the USART wordlength is 7, 8 or 9 bits
 		if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_7BITS){
 			// Load the data into the Transfer Data Register (mask the last bit as 0)
-			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0xFE);
+			pUSARTHandle->pUSARTx->TDR = (*pTxBuffer & 0xFE);
 
 			pTxBuffer++;
 		}else if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_8BITS){
 			// Load the data into the Transfer Data Register
-			pUSARTHandle->pUSARTx->TDR = (*pdata & 0xFF);
+			pUSARTHandle->pUSARTx->TDR = (*pTxBuffer & 0xFF);
 
 			pTxBuffer++;
 		}else{
 			// If 9 bit wordlength load the DR with a 2 byte masking that is 0 for any except the first 9 bits
-
+			pdata = (uint16_t*) pTxBuffer;
 			// Load the data into the Transfer Data Register
 			pUSARTHandle->pUSARTx->TDR = (*pdata & (uint16_t)0x01FF);
 
