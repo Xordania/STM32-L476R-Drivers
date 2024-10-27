@@ -110,8 +110,8 @@ typedef struct{
 #define USART_BUSY_IN_RX		1
 
 // DMA Enable states
-#define USART_DMA_DISABLE	1
-#define USART_DMA_ENABLE  	0
+#define USART_DMA_DISABLE	0
+#define USART_DMA_ENABLE  	1
 
 // Peripheral clock set up
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);

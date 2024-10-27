@@ -128,6 +128,9 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 		tempreg |= (pUSARTHandle->USART_Config.USART_ParityControl << USARTx_CR1_PS);
 	}
 
+	// Write the TE and RE bits in CR1
+	tempreg |= (pUSARTHandle->USART_Config.USART_Mode << USARTx_CR1_RE);
+
 	pUSARTHandle->pUSARTx->CR1 |= tempreg;
 	tempreg = 0;
 
@@ -159,8 +162,6 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 	uint16_t *pdata;
 	pdata = (uint16_t*)pTxBuffer;
 
-	// Write the TE bit in CR1 to high to send an idle frame as the first transmission
-	pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TE);
 
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
