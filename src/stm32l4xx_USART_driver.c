@@ -146,6 +146,10 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 
 	pUSARTHandle->pUSARTx->CR3 |= tempreg;
 
+	// Configure DMA use for Transmitter and Receiver
+	tempreg |= (pUSARTHandle->USART_Config.USART_DMATransmitter << USARTx_CR3_DMAT);
+	tempreg |= (pUSARTHandle->USART_Config.USART_DMAReceiver << USARTx_CR3_DMAR);
+
 	/********************** Configure BRR Register **********************/
 	USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baud);
 }

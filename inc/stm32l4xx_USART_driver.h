@@ -18,7 +18,8 @@ typedef struct{
 	uint8_t USART_WordLength;
 	uint8_t USART_ParityControl;
 	uint8_t USART_HWFlowControl;
-	uint8_t USART_DMAEnabled;
+	uint8_t USART_DMATransmitter;
+	uint8_t USART_DMAReceiver;
 }USART_Config_t;
 
 // Handle structure for USARTx peripheral
