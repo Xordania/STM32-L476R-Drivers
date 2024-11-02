@@ -113,7 +113,7 @@ uint32_t RCC_GetPCLK2Value(void){
 	// Get the register value that defines the APB2 pre-scaler
 	temp = (RCC->CFGR >> 11) & 0x7;
 
-	if(temp > 4){
+	if(temp < 4){
 		apb = 1;
 	}else{
 		apb = APB_PreScaler[temp - 4];

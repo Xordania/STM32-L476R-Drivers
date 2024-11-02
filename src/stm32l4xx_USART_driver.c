@@ -128,11 +128,13 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 		tempreg |= (pUSARTHandle->USART_Config.USART_ParityControl << USARTx_CR1_PS);
 	}
 
-	// Write the TE and RE bits in CR1
-	tempreg |= (pUSARTHandle->USART_Config.USART_Mode << USARTx_CR1_RE);
+
 
 	pUSARTHandle->pUSARTx->CR1 |= tempreg;
 	tempreg = 0;
+
+	/********************** Configure BRR Register **********************/
+	USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baud);
 
 	/********************** Configure CR2 Register **********************/
 
@@ -147,23 +149,22 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 	// The hardware control macros are set such that the correct values will be placed in the RTSE and CTSE registers
 	tempreg |= (pUSARTHandle->USART_Config.USART_HWFlowControl << USARTx_CR3_RTSE);
 
-	pUSARTHandle->pUSARTx->CR3 |= tempreg;
-
 	// Configure DMA use for Transmitter and Receiver
 	tempreg |= (pUSARTHandle->USART_Config.USART_DMATransmitter << USARTx_CR3_DMAT);
 	tempreg |= (pUSARTHandle->USART_Config.USART_DMAReceiver << USARTx_CR3_DMAR);
+	pUSARTHandle->pUSARTx->CR3 |= tempreg;
 
-	/********************** Configure BRR Register **********************/
-	USART_SetBaudRate(pUSARTHandle->pUSARTx, pUSARTHandle->USART_Config.USART_Baud);
 }
 
 
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
 	uint16_t *pdata;
 
-	// Clear TC flag
-	pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
+	// Write the TE bit CR1
+	pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TE);
 
+
+	while(!(pUSARTHandle->pUSARTx->ISR & USARTx_ISR_TEACK))
 
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
