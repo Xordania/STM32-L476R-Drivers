@@ -485,6 +485,15 @@ typedef struct{
 #define RCC_CR_PLLSAI2ON		28
 #define RCC_CR_PLLSAI2RDY		29
 
+#define RCC_CFGR_SW				0
+#define RCC_CFGR_SWS			2
+#define RCC_CFGR_HPRE			4
+#define RCC_CFGR_PPRE1			8
+#define RCC_CFGR_PPRE2			11
+#define RCC_CFGR_STOPWUCK		15
+#define RCC_CFGR_MCOSEL			24
+#define RCC_CFGR_MCOPRE			28
+
 #define RCC_CCIPR_USART1SEL		0
 #define RCC_CCIPR_USART2SEL		2
 #define RCC_CCIPR_USART3SEL		4

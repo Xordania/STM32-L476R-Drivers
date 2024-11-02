@@ -160,14 +160,19 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
 	uint16_t *pdata;
 
+
+
 	// Write the TE bit CR1
 	pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TE);
 
 
-	while(!(pUSARTHandle->pUSARTx->ISR & USARTx_ISR_TEACK))
+	while(!(pUSARTHandle->pUSARTx->ISR >> USARTx_ISR_TEACK));
 
 	// Loop over until "Len" number of bytes have been transferred
 	for(uint32_t i = 0; i < Len; i++){
+		// Clear the TC bit
+		pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
+
 		// Wait until the TXE flag is set in the ISR
 		while(!USART_GetFlagStatus(pUSARTHandle->pUSARTx, USARTx_TXE_FLAG));
 
@@ -179,7 +184,7 @@ void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t L
 			pTxBuffer++;
 		}else if(pUSARTHandle->USART_Config.USART_WordLength == USART_WORDLEN_8BITS){
 			// Load the data into the Transfer Data Register
-			pUSARTHandle->pUSARTx->TDR = (*pTxBuffer & 0xFF);
+			pUSARTHandle->pUSARTx->TDR = (*pTxBuffer & (uint8_t)0xFF);
 
 			pTxBuffer++;
 		}else{
