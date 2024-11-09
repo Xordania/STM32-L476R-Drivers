@@ -9,6 +9,7 @@
 #include "stm32l4xx_USART_driver.h"
 
 static void USART_LoadTDR(USART_Handle_t *pUSARTHandle);
+static void USART_EV_IRQHandler(USART_Handle_t *pUSARTHandle);
 
 USART_Handle_t *pUSART1HandleLink;
 USART_Handle_t *pUSART2HandleLink;

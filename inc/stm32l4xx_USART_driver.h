@@ -139,8 +139,6 @@ void USART3_EV_IRQHandler(void);
 void UART4_EV_IRQHandler(void);
 void UART5_EV_IRQHandler(void);
 
-// The main interrupt handling function
-static void USART_EV_IRQHandler(USART_Handle_t *pUSARTHandle);
 
 
 // Send and receive data
