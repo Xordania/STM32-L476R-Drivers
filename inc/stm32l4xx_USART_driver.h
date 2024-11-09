@@ -130,6 +130,13 @@ void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint8_t FlagName);
 void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi);
 void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 
+// USART callback functions
+void USART1_EV_IRQHandler(void);
+void USART2_EV_IRQHandler(void);
+void USART3_EV_IRQHandler(void);
+void UART4_EV_IRQHandler(void);
+void UART5_EV_IRQHandler(void);
+
 // Send and receive data
 void USART_SendData(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len);
 void USART_ReceiveData(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, uint32_t Len);

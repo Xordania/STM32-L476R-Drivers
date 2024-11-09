@@ -8,6 +8,12 @@
 
 #include "stm32l4xx_USART_driver.h"
 
+USART_Handle_t *pUSART1HandleLink;
+USART_Handle_t *pUSART2HandleLink;
+USART_Handle_t *pUSART3HandleLink;
+USART_Handle_t *pUART4HandleLink;
+USART_Handle_t *pUART5HandleLink;
+
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi){
 	if(EnOrDi == ENABLE){
 		if(pUSARTx == USART1){
@@ -112,6 +118,28 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority){
     uint8_t shift_amount = (8 * iprx_section) + (8 - NO_PR_BITS_IMPLEMENTED);
     *(NVIC_PR_BASEADDR + iprx) |= (IRQPriority << shift_amount);
 }
+
+void USART1_EV_IRQHandler(void){
+	USART_EV_IRQHandler(pUSART1HandleLink);
+}
+
+void USART2_EV_IRQHandler(void){
+	USART_EV_IRQHandler(pUSART2HandleLink);
+}
+
+void USART3_EV_IRQHandler(void){
+	USART_EV_IRQHandler(pUSART3HandleLink);
+}
+
+void USART4_EV_IRQHandler(void){
+	USART_EV_IRQHandler(pUART4HandleLink);
+}
+
+void UART5_EV_IRQHandler(void){
+	USART_EV_IRQHandler(pUART5HandleLink);
+}
+
+
 
 void USART_Init(USART_Handle_t *pUSARTHandle){
 	// Temporary variable
