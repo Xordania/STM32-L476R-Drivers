@@ -129,15 +129,16 @@ uint8_t USART_GetFlagStatus(USART_RegDef_t *pUSARTx, uint32_t FlagName);
 void USART_ClearFlag(USART_RegDef_t *pUSARTx, uint8_t FlagName);
 
 // IRQ configration and ISR handling
+void USART_IRQInterruptControl(USART_Handle_t *pUSARTHandle, uint8_t EnOrDi);
 void USART_IRQInterruptConfig(uint8_t IRQNumber, uint8_t EnOrDi);
 void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority);
 
 // USART interrupt handlers functions
-void USART1_EV_IRQHandler(void);
-void USART2_EV_IRQHandler(void);
-void USART3_EV_IRQHandler(void);
-void UART4_EV_IRQHandler(void);
-void UART5_EV_IRQHandler(void);
+void USART1_IRQHandler(void);
+void USART2_IRQHandler(void);
+void USART3_IRQHandler(void);
+void UART4_IRQHandler(void);
+void UART5_IRQHandler(void);
 
 
 

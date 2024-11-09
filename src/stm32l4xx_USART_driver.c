@@ -9,7 +9,7 @@
 #include "stm32l4xx_USART_driver.h"
 
 static void USART_LoadTDR(USART_Handle_t *pUSARTHandle);
-static void USART_EV_IRQHandler(USART_Handle_t *pUSARTHandle);
+static void USART_IRQHandler(USART_Handle_t *pUSARTHandle);
 
 USART_Handle_t *pUSART1HandleLink;
 USART_Handle_t *pUSART2HandleLink;
@@ -54,11 +54,11 @@ void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi){
 	}
 }
 
-void USART_InterruptControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi){
+void USART_IRQInterruptControl(USART_Handle_t *pUSARTHandle, uint8_t EnOrDi){
 	if(EnOrDi == ENABLE){
-		pUSARTx->CR1 |= (0x3FF << USARTx_CR1_IDLEIE);
+		pUSARTHandle->pUSARTx->CR1 |= (0x3FF << USARTx_CR1_IDLEIE);
 	}else{
-		pUSARTx->CR1 &= ~(0x3FF << USARTx_CR1_IDLEIE);
+		pUSARTHandle->pUSARTx->CR1 &= ~(0x3FF << USARTx_CR1_IDLEIE);
 	}
 }
 
@@ -122,27 +122,27 @@ void USART_IRQPriorityConfig(uint8_t IRQNumber, uint32_t IRQPriority){
     *(NVIC_PR_BASEADDR + iprx) |= (IRQPriority << shift_amount);
 }
 
-void USART1_EV_IRQHandler(void){
-	USART_EV_IRQHandler(pUSART1HandleLink);
+void USART1_IRQHandler (void){
+	USART_IRQHandler(pUSART1HandleLink);
 }
 
 void USART2_EV_IRQHandler(void){
-	USART_EV_IRQHandler(pUSART2HandleLink);
+	USART_IRQHandler(pUSART2HandleLink);
 }
 
-void USART3_EV_IRQHandler(void){
-	USART_EV_IRQHandler(pUSART3HandleLink);
+void USART3_IRQHandler(void){
+	USART_IRQHandler(pUSART3HandleLink);
 }
 
-void USART4_EV_IRQHandler(void){
-	USART_EV_IRQHandler(pUART4HandleLink);
+void USART4_IRQHandler(void){
+	USART_IRQHandler(pUART4HandleLink);
 }
 
-void UART5_EV_IRQHandler(void){
-	USART_EV_IRQHandler(pUART5HandleLink);
+void UART5_IRQHandler(void){
+	USART_IRQHandler(pUART5HandleLink);
 }
 
-static void USART_EV_IRQHandler(USART_Handle_t *pUSARTHandle){
+static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 
 	// To check whether it is a specific flag that creates an interrupt we have to check
 	// both the event flagand the control bit
