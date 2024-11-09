@@ -502,8 +502,8 @@ typedef struct{
 #define RCC_CCIPR_USART1SEL		0
 #define RCC_CCIPR_USART2SEL		2
 #define RCC_CCIPR_USART3SEL		4
-#define RCC_CCIPR_USART4SEL		6
-#define RCC_CCIPR_USART5SEL		8
+#define RCC_CCIPR_UART4SEL		6
+#define RCC_CCIPR_UART5SEL		8
 #define RCC_CCIPR_LPUART1SEL	10
 #define RCC_CCIPR_I2C1SEL		12
 #define RCC_CCIPR_I2C2SEL		14
@@ -654,8 +654,8 @@ typedef struct{
 #define USARTx_CR1_TE			3   // Transmitter enable
 #define USARTx_CR1_IDLEIE		4   // IDLE interrupt enable
 #define USARTx_CR1_RXNEIE		5   // RXNE interrupt enable
-#define USARTx_CR1_TXEIE		6   // Transmission complete interrupt enable
-#define USARTx_CR1_TCIE			7   // Interrupt enable
+#define USARTx_CR1_TCIE			6   // Interrupt enable
+#define USARTx_CR1_TXEIE		7   // Transmission complete interrupt enable
 #define USARTx_CR1_PEIE			8   // Interrupt enable
 #define USARTx_CR1_PS			9   // Parity selection
 #define USARTx_CR1_PCE			10  // Parity control enable

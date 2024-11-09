@@ -10,6 +10,7 @@
 
 static void USART_LoadTDR(USART_Handle_t *pUSARTHandle);
 static void USART_IRQHandler(USART_Handle_t *pUSARTHandle);
+static void USART_SetHandleLink(USART_Handle_t *pUSARTHandle);
 
 USART_Handle_t *pUSART1HandleLink;
 USART_Handle_t *pUSART2HandleLink;
@@ -56,7 +57,8 @@ void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi){
 
 void USART_IRQInterruptControl(USART_Handle_t *pUSARTHandle, uint8_t EnOrDi){
 	if(EnOrDi == ENABLE){
-		pUSARTHandle->pUSARTx->CR1 |= (0x3FF << USARTx_CR1_IDLEIE);
+		// Do not turn on the TXE or TC bits as they will DOS the interrupt handler if nothing is being sent
+		pUSARTHandle->pUSARTx->CR1 |= (0x7F3 << USARTx_CR1_IDLEIE);
 	}else{
 		pUSARTHandle->pUSARTx->CR1 &= ~(0x3FF << USARTx_CR1_IDLEIE);
 	}
@@ -167,10 +169,10 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 	if(event_flag && control_bit){
 		// A frame of data has been sent
 
-		// If there is still data left to send clear the TC bit
+		// If there is still data left to send, or the peripheral is not transmitting, clear the TC bit
 		// Otherwise the transmission is complete and the application should be informed
 		if(pUSARTHandle->TransmitLen != pUSARTHandle->nTransmitted){
-			pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
+			// pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
 		}else{
 			// TODO Add application callback saying completed transmission
 		}
@@ -265,15 +267,20 @@ void USART_Init(USART_Handle_t *pUSARTHandle){
 	tempreg |= (pUSARTHandle->USART_Config.USART_DMAReceiver << USARTx_CR3_DMAR);
 	pUSARTHandle->pUSARTx->CR3 |= tempreg;
 
+
 }
 
 uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint32_t Len){
 	uint8_t txstate = pUSARTHandle->TxBusyState;
 
 	if(txstate == USART_NOT_BUSY_IN_TX){
+
 		pUSARTHandle->TransmitLen = Len;
 		pUSARTHandle->pTxBuffer = pTxBuffer;
 		pUSARTHandle->TxBusyState = USART_BUSY_IN_TX;
+
+		// Link the passed handle to the USART handles stored by the driver
+		USART_SetHandleLink(pUSARTHandle);
 
 		// Enable the interrupt for TXE
 		pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_TXEIE);
@@ -363,6 +370,23 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate){
 	tempreg |= F_part;
 
 	pUSARTx->BRR |= tempreg;
+}
+
+// Links the drivers Usart handles to the handle given by the user
+static void USART_SetHandleLink(USART_Handle_t *pUSARTHandle){
+	if(pUSARTHandle->pUSARTx == USART1){
+		pUSART1HandleLink = pUSARTHandle;
+	}else if(pUSARTHandle->pUSARTx == USART2){
+		pUSART2HandleLink = pUSARTHandle;
+	}else if(pUSARTHandle->pUSARTx == USART3){
+		pUSART3HandleLink = pUSARTHandle;
+	}else if(pUSARTHandle->pUSARTx == UART4){
+		pUART4HandleLink = pUSARTHandle;
+	}else if(pUSARTHandle->pUSARTx == UART5){
+		pUART5HandleLink = pUSARTHandle;
+	}else{
+		//TODO: Send application callback message to user
+	}
 }
 
 
