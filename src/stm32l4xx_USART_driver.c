@@ -165,6 +165,10 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 			pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
 		}else{
 			// TODO Add application callback saying completed transmission
+
+			// Turn off transmit mode
+			pUSARTHandle->pUSARTx->CR1 &= ~(USART_MODE_ONLY_TX << USARTx_CR1_RE);
+
 		}
 	}
 
