@@ -5,12 +5,12 @@
  *      Author: Pillow sleeper
  */
 
-
+#include <stdbool.h>
 #include "stm32l4xx_USART_driver.h"
 
 static void USART_LoadTDR(USART_Handle_t *pUSARTHandle);
 static void USART_IRQHandler(USART_Handle_t *pUSARTHandle);
-static void USART_SetHandleLink(USART_Handle_t *pUSARTHandle);
+static bool USART_SetHandleLink(USART_Handle_t *pUSARTHandle);
 
 USART_Handle_t *pUSART1HandleLink;
 USART_Handle_t *pUSART2HandleLink;
@@ -164,7 +164,6 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 		if(pUSARTHandle->TransmitLen != pUSARTHandle->nTransmitted){
 			pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
 		}else{
-			// TODO Add application callback saying completed transmission
 			USART_ApplicationEventCallback(pUSARTHandle, USART_TX_COMPLETE);
 
 			// Turn off the TCIE and TXR Interrupts
@@ -173,7 +172,6 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 
 			// Turn off transmit mode
 			pUSARTHandle->pUSARTx->CR1 &= ~(USART_MODE_ONLY_TX << USARTx_CR1_RE);
-
 		}
 	}
 
@@ -286,12 +284,15 @@ uint8_t USART_SendDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pTxBuffer, uint3
 
 	if(txstate == USART_NOT_BUSY_IN_TX){
 
+		// Link the passed handle to the USART handles stored by the driver
+		// If an invalid one is passed then return not busy. an application callback is sent from within the function
+		if(USART_SetHandleLink(pUSARTHandle) == false){
+			return USART_NOT_BUSY_IN_TX;
+		}
+
 		pUSARTHandle->TransmitLen = Len;
 		pUSARTHandle->pTxBuffer = pTxBuffer;
 		pUSARTHandle->TxBusyState = USART_BUSY_IN_TX;
-
-		// Link the passed handle to the USART handles stored by the driver
-		USART_SetHandleLink(pUSARTHandle);
 
 		// Configure the peripheral into transmit mode
 		pUSARTHandle->pUSARTx->CR1 |= (USART_MODE_ONLY_TX << USARTx_CR1_RE);
@@ -388,7 +389,7 @@ void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate){
 }
 
 // Links the drivers Usart handles to the handle given by the user
-static void USART_SetHandleLink(USART_Handle_t *pUSARTHandle){
+static bool USART_SetHandleLink(USART_Handle_t *pUSARTHandle){
 	if(pUSARTHandle->pUSARTx == USART1){
 		pUSART1HandleLink = pUSARTHandle;
 	}else if(pUSARTHandle->pUSARTx == USART2){
@@ -400,8 +401,11 @@ static void USART_SetHandleLink(USART_Handle_t *pUSARTHandle){
 	}else if(pUSARTHandle->pUSARTx == UART5){
 		pUART5HandleLink = pUSARTHandle;
 	}else{
-		//TODO: Send application callback message to user
+		USART_ApplicationEventCallback(pUSARTHandle, USART_HANDLE_NOT_VALID);
+		return false;
 	}
+
+	return true;
 }
 
 // Aplication callback

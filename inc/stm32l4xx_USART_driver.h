@@ -116,9 +116,10 @@ typedef struct{
 #define USART_DMA_ENABLE  	1
 
 // Application events
-#define USART_TX_FAILED		1
-#define USART_RX_FAILED		2
-#define USART_TX_COMPLETE	3
+#define USART_HANDLE_NOT_VALID 	0
+#define USART_TX_FAILED			1
+#define USART_RX_FAILED			2
+#define USART_TX_COMPLETE		3
 
 
 
