@@ -399,4 +399,6 @@ static void USART_SetHandleLink(USART_Handle_t *pUSARTHandle){
 	}
 }
 
-
+// Aplication callback
+__weak void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t AppEv){
+}

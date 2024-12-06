@@ -152,6 +152,6 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
 void USART_SetBaudRate(USART_RegDef_t *pUSARTx, uint32_t BaudRate);
 
 // Application callback
-void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t AppEv);
+__weak void USART_ApplicationEventCallback(USART_Handle_t *pUSARTHandle, uint8_t AppEv);
 
 #endif /* STM32_L476R_DRIVERS_INC_STM32L4XX_USART_DRIVER_H_ */
