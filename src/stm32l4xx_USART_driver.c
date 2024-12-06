@@ -164,7 +164,12 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 		if(pUSARTHandle->TransmitLen != pUSARTHandle->nTransmitted){
 			pUSARTHandle->pUSARTx->ICR |= (ENABLE << USARTx_ICR_TCCF);
 		}else{
+			// TODO Add application callback saying completed transmission
 			USART_ApplicationEventCallback(pUSARTHandle, USART_TX_COMPLETE);
+
+			// Turn off the TCIE and TXR Interrupts
+			pUSARTHandle->pUSARTx->CR1 &= ~(1 << USARTx_CR1_TCIE);
+			pUSARTHandle->pUSARTx->CR1 &= ~(1 << USARTx_CR1_TXEIE);
 
 			// Turn off transmit mode
 			pUSARTHandle->pUSARTx->CR1 &= ~(USART_MODE_ONLY_TX << USARTx_CR1_RE);
