@@ -120,8 +120,18 @@ typedef struct{
 #define USART_TX_FAILED			1
 #define USART_RX_FAILED			2
 #define USART_TX_COMPLETE		3
-
-
+#define USART_RX_COMPLETE		4
+#define USART_CTS_INTERRUPT		5
+#define USART_OVERRUN_ERROR		6
+#define USART_IDLE_LINE			7
+#define USART_PARITY_ERROR		8
+#define USART_LIN_BREAK			9
+#define USART_NOISE_FLAG		10
+#define USART_FRAMING_ERROR		11
+#define USART_CHARACTER_MATCH	12
+#define USART_RECEIVER_TIMEOUT	13
+#define USART_END_OF_BLOCK		14
+#define USART_WAKEUP			15
 
 // Peripheral clock set up
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
