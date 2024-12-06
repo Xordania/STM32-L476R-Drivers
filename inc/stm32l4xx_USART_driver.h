@@ -115,6 +115,13 @@ typedef struct{
 #define USART_DMA_DISABLE	0
 #define USART_DMA_ENABLE  	1
 
+// Application events
+#define USART_TX_FAILED		1
+#define USART_RX_FAILED		2
+#define USART_TX_COMPLETE	3
+
+
+
 // Peripheral clock set up
 void USART_PeriClockControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi);
 
