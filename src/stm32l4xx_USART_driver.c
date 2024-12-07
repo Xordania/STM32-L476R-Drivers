@@ -204,7 +204,14 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 	control_bit = (pUSARTHandle->pUSARTx->CR1 >> USARTx_CR1_RXNEIE) & 1;
 
 	if(event_flag && control_bit){
-		// TODO: Implement receiver logic
+		// Read the contents of the read register into the handles receive buffer
+		*(pUSARTHandle->pRxBuffer) = *(pUSARTHandle->pUSARTx->RDR);
+
+		// Increment the receive buffer
+		pUSARTHandle->pRxBuffer++;
+
+		// Make the program aware a character has been received
+		USART_ApplicationEventCallback(pUSARTHandle, USART_RX_COMPLETE);
 	}
 
 	event_flag = (pUSARTHandle->pUSARTx->ISR >> USARTx_ISR_ORE) & 1;
@@ -410,7 +417,6 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
 		if(USART_SetHandleLink(pUSARTHandle) == false){
 			return USART_NOT_BUSY_IN_RX;
 		}
-
 
 		// Enable the interrupt for RXE
 		pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_RXNEIE);
