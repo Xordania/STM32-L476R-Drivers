@@ -221,8 +221,8 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 		USART_ApplicationEventCallback(pUSARTHandle, USART_IDLE_LINE);
 	}
 
-	event_flag = (pUSARTHandle->pUSARTx->ISR >> USARTx_ISR_PEIE);
-	control_bit = (pUSARTHandle->pUSARTx->CR1 >> USARTx_CR1_PE);
+	event_flag = (pUSARTHandle->pUSARTx->ISR >> USARTx_ISR_PE);
+	control_bit = (pUSARTHandle->pUSARTx->CR1 >> USARTx_CR1_PEIE);
 
 	if(event_flag && control_bit){
 		USART_ApplicationEventCallback(pUSARTHandle, USART_PARITY_ERROR);
