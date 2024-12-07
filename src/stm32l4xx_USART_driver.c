@@ -57,11 +57,11 @@ void USART_USARTControl(USART_RegDef_t *pUSARTx, uint8_t EnOrDi){
 
 void USART_IRQInterruptControl(USART_Handle_t *pUSARTHandle, uint8_t EnOrDi){
 	if(EnOrDi == ENABLE){
-		// Do not turn on the TXE or TC bits as they will DOS the interrupt handler if nothing is being sent
-		pUSARTHandle->pUSARTx->CR1 |= (0x13 << USARTx_CR1_IDLEIE);
+		// Do not turn on the RXNE, TXE or TC bits as they will DOS the interrupt handler if nothing is being sent
+		pUSARTHandle->pUSARTx->CR1 |= (0x11 << USARTx_CR1_IDLEIE);
 		pUSARTHandle->pUSARTx->CR3 |= (0x01 << USARTx_CR3_EIE);
 	}else{
-		pUSARTHandle->pUSARTx->CR1 &= ~(0x13 << USARTx_CR1_IDLEIE);
+		pUSARTHandle->pUSARTx->CR1 &= ~(0x11 << USARTx_CR1_IDLEIE);
 		pUSARTHandle->pUSARTx->CR3 &= ~(0x01 << USARTx_CR3_EIE);
 
 	}
@@ -202,10 +202,11 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 
 	event_flag = (pUSARTHandle->pUSARTx->ISR >> USARTx_ISR_RXNE) & 1;
 	control_bit = (pUSARTHandle->pUSARTx->CR1 >> USARTx_CR1_RXNEIE) & 1;
+	uint8_t reack = (pUSARTHandle->pUSARTx->ISR >> USARTx_ISR_REACK) & 1;
 
-	if(event_flag && control_bit){
+	if(event_flag && control_bit && reack){
 		// Read the contents of the read register into the handles receive buffer
-		*(pUSARTHandle->pRxBuffer) = *(pUSARTHandle->pUSARTx->RDR);
+		*(pUSARTHandle->pRxBuffer) = (pUSARTHandle->pUSARTx->RDR) & 0xff;
 
 		// Increment the receive buffer
 		pUSARTHandle->pRxBuffer++;
@@ -417,6 +418,9 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
 		if(USART_SetHandleLink(pUSARTHandle) == false){
 			return USART_NOT_BUSY_IN_RX;
 		}
+
+		// Configure the peripheral into receive mode
+		pUSARTHandle->pUSARTx->CR1 |= (USART_MODE_ONLY_RX << USARTx_CR1_RE);
 
 		// Enable the interrupt for RXE
 		pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_RXNEIE);
