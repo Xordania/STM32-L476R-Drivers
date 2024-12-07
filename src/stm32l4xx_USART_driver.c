@@ -208,9 +208,9 @@ static void USART_IRQHandler(USART_Handle_t *pUSARTHandle){
 		// Read the contents of the read register into the handles receive buffer
 		*(pUSARTHandle->pRxBuffer) = (pUSARTHandle->pUSARTx->RDR) & 0xff;
 
-		// Increment the receive buffer
+		// Increment the receive buffer and received number
 		pUSARTHandle->pRxBuffer++;
-
+		pUSARTHandle->nReceived++;
 		// Make the program aware a character has been received
 		USART_ApplicationEventCallback(pUSARTHandle, USART_RX_COMPLETE);
 	}
