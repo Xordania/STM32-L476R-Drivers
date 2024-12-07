@@ -404,6 +404,14 @@ uint8_t USART_ReceiveDataIT(USART_Handle_t *pUSARTHandle, uint8_t *pRxBuffer, ui
 		pUSARTHandle->pRxBuffer = pRxBuffer;
 		pUSARTHandle->RxBusyState = USART_BUSY_IN_RX;
 		pUSARTHandle->nTransmitted = 0;
+
+		// Link the passed handle to the USART handles stored by the driver
+		// If an invalid one is passed then return not busy. an application callback is sent from within the function
+		if(USART_SetHandleLink(pUSARTHandle) == false){
+			return USART_NOT_BUSY_IN_RX;
+		}
+
+
 		// Enable the interrupt for RXE
 		pUSARTHandle->pUSARTx->CR1 |= (ENABLE << USARTx_CR1_RXNEIE);
 
