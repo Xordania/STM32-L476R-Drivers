@@ -480,15 +480,17 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 
 		pI2CHandle->SorM = I2C_MASTER_MODE;
 
-		// Set the RELOAD bit to nengative, else a start condition cannot be sent
+		// Set the RELOAD bit to negative, else a start condition cannot be sent
+		// Also clear the stop detection flag
 		pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_RELOAD);
-
+		pI2CHandle->pI2Cx->ICR |= (ENABLE << I2Cx_ICR_STOPCF);
 		//2. Check if Len is greater than 255, if it is then we need to set the Autoend bit, fill NBYTES and generate start condition
 		if(Len > 255){
 			// Set sections length to 255
 			sLen = 255;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen << I2Cx_CR2_NBYTES);
 
 
@@ -502,6 +504,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 			sLen = Len;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen<< I2Cx_CR2_NBYTES);
 
 			I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_WRITE);
@@ -541,12 +544,16 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 
 		pI2CHandle->SorM = I2C_MASTER_MODE;
 
+		pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_RELOAD);
+		pI2CHandle->pI2Cx->ICR |= (ENABLE << I2Cx_ICR_STOPCF);
+
 		//2. Check if Len is greater than 255, if it is then we need to set the Autoend bit, fill NBYTES and generate start condition
 		if(Len > 255){
 			// Set sections length to 255
 			sLen = 255;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen << I2Cx_CR2_NBYTES);
 
 			// If the RELOAD register is not set this must be the first set of data. Send a start
@@ -561,6 +568,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 			sLen = Len;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen<< I2Cx_CR2_NBYTES);
 
 			// Check if the reload bit is set. If it is then this is not the first set of data from the TX. Zero the Reload bit
@@ -597,8 +605,6 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 		while(!I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_TC_FLAG));
 	}while(Len > 0);
 
-	//7. Generate a STOP condition, clearing the TC flag
-	pI2CHandle->pI2Cx->CR2 |= (1 << I2Cx_CR2_STOP);
 
 }
 
