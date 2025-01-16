@@ -276,6 +276,31 @@ typedef struct{
 }USART_RegDef_t;
 
 
+typedef struct{
+	uint32_t CR1;					//	TIM control register 1
+	uint32_t CR2;					//  TIM control register 2
+	uint32_t SMCR;					//  TIM slave mode control register
+	uint32_t DIER;					//  TIM DMA/interrupt enable register
+	uint32_t SR;					//  TIM status register
+	uint32_t EGR;                   //  TIM event generation register
+	uint32_t CCMR1;                 //  TIM capture/compare mode register 1
+	uint32_t CCMR2;                 //  TIM capture/compare mode register 2
+	uint32_t CCER;                  //  TIM capture/comapre enable register
+	uint32_t CNT;                   //  TIM counter
+	uint32_t PSC;                   //  TIM prescaler
+	uint32_t ARR;                   //  TIM auto-reload register
+	uint32_t RESERVED1;             //  TIM RESERVED
+	uint32_t CCR1;                  //  TIM capture/compare register 1
+	uint32_t CCR2;                  //  TIM capture/compare register 2
+	uint32_t CCR3;                  //  TIM capture/compare register 3
+	uint32_t CCR4;                  //  TIM capture/compare register 4
+	uint32_t RESERVED2;             //  TIM RESERVED
+	uint32_t DCR;                   //  TIM DMA control register
+	uint32_t DMAR;                  //  TIM DMA address for full transfer
+	uint32_t OR1;                   //  TIM option register 1
+	uint32_t OR2;                   //  TIM option register 2
+}GENTIM_RegDef_t;
+
 #define GPIOA ((GPIO_RegDef_t*)GPIOA_BASEADDR)
 #define GPIOB ((GPIO_RegDef_t*)GPIOB_BASEADDR)
 #define GPIOC ((GPIO_RegDef_t*)GPIOC_BASEADDR)
@@ -303,6 +328,10 @@ typedef struct{
 #define UART4 	((USART_RegDef_t *)UART4_BASEADDR)
 #define UART5 	((USART_RegDef_t *)UART5_BASEADDR)
 
+#define TIM2	((GENTIM_RegDef_t *)TIM2_BASEADDR)
+#define TIM3	((GENTIM_RegDef_t *)TIM3_BASEADDR)
+#define TIM4	((GENTIM_RegDef_t *)TIM4_BASEADDR)
+#define TIM5	((GENTIM_RegDef_t *)TIM5_BASEADDR)
 
 //---------------------------------Clock enable macros for different peripherals---------------------------------------------
 // Clock enable macros for GPIOx peripherals
