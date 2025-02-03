@@ -120,9 +120,9 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 
 	temp = 0;
 
-	// COFIGURE other pin settings
+	// CONFIGURE other pin settings
 
-	// 2. Configure the speed
+	// 4. Configure the speed
 	temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 	pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 	pGPIOHandle->pGPIOx->OSPEEDR |= temp;
@@ -134,16 +134,16 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 	pGPIOHandle->pGPIOx->PUPDR |= temp;
 	temp = 0;
 
-	// 4. Configure the optype
+	// 5. Configure the optype
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType == GPIO_MODE_OUT){
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-		pGPIOHandle->pGPIOx->OTYPER &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
+		pGPIOHandle->pGPIOx->OTYPER &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		pGPIOHandle->pGPIOx->OTYPER |= temp;
 	}
 
 	temp = 0;
 
-	// 5. Configure the alt functionality
+	// 6. Configure the alt functionality
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN){
 		uint8_t temp1, temp2;
 
