@@ -12,10 +12,6 @@ static void I2C_FillNBytes(I2C_Handle_t *pI2CHandle, uint32_t len);
 static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle);
 static void I2C_SetHandleLink(I2C_Handle_t *pI2CHandle);
 
-uint16_t AHB_PreScaler[8] = {2, 4, 8, 16, 64, 128, 256, 512};
-uint8_t APB_PreScaler[4] = {2, 4, 8, 16};
-
-uint32_t MSI_RANGES[12] = {MSI_RANGE_0, MSI_RANGE_1, MSI_RANGE_2, MSI_RANGE_3, MSI_RANGE_4, MSI_RANGE_5,MSI_RANGE_6, MSI_RANGE_7, MSI_RANGE_8, MSI_RANGE_9, MSI_RANGE_10, MSI_RANGE_11};
 
 I2C_Handle_t *pI2C1HandleLink;
 I2C_Handle_t *pI2C2HandleLink;
@@ -49,61 +45,6 @@ void I2C_PeripheralControl(I2C_RegDef_t *pI2Cx, uint8_t EnOrDi){
 		pI2Cx->CR1 &= ~(1 << I2Cx_CR1_PE);
 	}
 }
-
-// Find out the frequency of the clock being used as the system clock
-uint32_t RCC_GetPCLK1Value(void){
-	uint32_t pclk1;
-
-	uint8_t clksrc, temp, ahbp, apb;
-
-	clksrc = (RCC->CFGR >> 2) & 0x3;
-
-	if(clksrc == 0x0){
-		// Clock source is MSI
-		uint8_t MSI_Range;
-		uint8_t	MSIRGSEL = (RCC->CR >> 3) & 0x1;
-
-		// Get MSI_Range from the correct register
-		if(MSIRGSEL == 1){
-			MSI_Range = (RCC->CR >> 4) & 0xF;
-		} else if(MSIRGSEL == 0){
-			MSI_Range = (RCC->CSR >> 8) & 0xF;
-		}
-		pclk1 = MSI_RANGES[MSI_Range];
-	} else if(clksrc == 0x1){
-		// Clock source is 16MHz HSI16
-		pclk1 = HSI16_Clock_Frequency;
-	} else if(clksrc == 0x2){
-		// Clock source is HSE, an external clock source, this section is incomplete
-		// TODO: Fill this out
-
-	} else if(clksrc == 0x03){
-		// Clock source is PLL, this looks like a pain to fill our, I'm not doing it for now
-		// TODO: Fill this out
-
-	}
-
-	// Get the register value that defines the AHB pre-scaler
-	temp = (RCC->CFGR >> 4) & 0xF;
-
-	if(temp < 8){
-		ahbp = 1;
-	}else{
-		ahbp = AHB_PreScaler[temp - 8];
-	}
-
-	// Get the register value that defines the APB1 pre-scaler
-	temp = (RCC->CFGR >> 8) & 0x7;
-
-	if(temp > 4){
-		apb = 1;
-	}else{
-		apb = APB_PreScaler[temp - 4];
-	}
-
-	return pclk1/(apb * ahbp);
-}
-
 
 void I2C_Init(I2C_Handle_t *pI2CHandle){
 	uint32_t tempreg = 0;
@@ -186,8 +127,6 @@ uint8_t I2C_GetFlagStatus(I2C_RegDef_t *pI2Cx, uint32_t FlagName)
 
 
 void I2C_IRQInterruptControl(I2C_Handle_t *pI2CHandle, uint8_t EnOrDi){
-	// Initialise all of the I2C interrupts
-
 	// Put a 1 in all of the interrupt activate bits
 	if(EnOrDi == ENABLE){
 		pI2CHandle->pI2Cx->CR1 |= (0x7F << ENABLE);
@@ -541,15 +480,17 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 
 		pI2CHandle->SorM = I2C_MASTER_MODE;
 
-		// Set the RELOAD bit to nengative, else a start condition cannot be sent
+		// Set the RELOAD bit to negative, else a start condition cannot be sent
+		// Also clear the stop detection flag
 		pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_RELOAD);
-
+		pI2CHandle->pI2Cx->ICR |= (ENABLE << I2Cx_ICR_STOPCF);
 		//2. Check if Len is greater than 255, if it is then we need to set the Autoend bit, fill NBYTES and generate start condition
 		if(Len > 255){
 			// Set sections length to 255
 			sLen = 255;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen << I2Cx_CR2_NBYTES);
 
 
@@ -563,6 +504,7 @@ void I2C_MasterSendData(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t L
 			sLen = Len;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen<< I2Cx_CR2_NBYTES);
 
 			I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_WRITE);
@@ -602,12 +544,16 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 
 		pI2CHandle->SorM = I2C_MASTER_MODE;
 
+		pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_RELOAD);
+		pI2CHandle->pI2Cx->ICR |= (ENABLE << I2Cx_ICR_STOPCF);
+
 		//2. Check if Len is greater than 255, if it is then we need to set the Autoend bit, fill NBYTES and generate start condition
 		if(Len > 255){
 			// Set sections length to 255
 			sLen = 255;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen << I2Cx_CR2_NBYTES);
 
 			// If the RELOAD register is not set this must be the first set of data. Send a start
@@ -622,6 +568,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 			sLen = Len;
 
 			//3. Set the NBYTES registers to the number of bytes to be transmitted
+			pI2CHandle->pI2Cx->CR2 &= ~(0xFF << I2Cx_CR2_NBYTES); // Clear NBYTES register
 			pI2CHandle->pI2Cx->CR2 |= (sLen<< I2Cx_CR2_NBYTES);
 
 			// Check if the reload bit is set. If it is then this is not the first set of data from the TX. Zero the Reload bit
@@ -658,8 +605,6 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 		while(!I2C_GetFlagStatus(pI2CHandle->pI2Cx, I2C_TC_FLAG));
 	}while(Len > 0);
 
-	//7. Generate a STOP condition, clearing the TC flag
-	pI2CHandle->pI2Cx->CR2 |= (1 << I2Cx_CR2_STOP);
 
 }
 

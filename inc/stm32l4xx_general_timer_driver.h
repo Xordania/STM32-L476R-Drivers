@@ -1,0 +1,13 @@
+/*
+ * stm32l4xx_general_timer_driver.h
+ *
+ *  Created on: 16 Jan 2025
+ *      Author: Pillow sleeper
+ */
+
+#ifndef STM32_L476R_DRIVERS_INC_STM32L4XX_GENERAL_TIMER_DRIVER_H_
+#define STM32_L476R_DRIVERS_INC_STM32L4XX_GENERAL_TIMER_DRIVER_H_
+
+
+
+#endif /* STM32_L476R_DRIVERS_INC_STM32L4XX_GENERAL_TIMER_DRIVER_H_ */

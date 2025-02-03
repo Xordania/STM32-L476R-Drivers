@@ -120,36 +120,36 @@ void GPIO_Init(GPIO_Handle_t *pGPIOHandle){
 
 	temp = 0;
 
-	// COFIGURE other pin settings
+	// CONFIGURE other pin settings
 
-	// 2. Configure the speed
+	// 4. Configure the speed
 	temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-	pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinSpeed);
+	pGPIOHandle->pGPIOx->OSPEEDR &= ~(0x3 << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 	pGPIOHandle->pGPIOx->OSPEEDR |= temp;
 	temp = 0;
 
 	// 3. Configure the pupd settings
 	temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl << (2 * pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
-	pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinPuPdControl);
+	pGPIOHandle->pGPIOx->PUPDR &= ~(0x3 << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 	pGPIOHandle->pGPIOx->PUPDR |= temp;
 	temp = 0;
 
-	// 4. Configure the optype
+	// 5. Configure the optype
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType == GPIO_MODE_OUT){
 		temp = pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber;
-		pGPIOHandle->pGPIOx->OTYPER &= ~(0x3 << pGPIOHandle->GPIO_PinConfig.GPIO_PinOPType);
+		pGPIOHandle->pGPIOx->OTYPER &= ~(0x1 << pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber);
 		pGPIOHandle->pGPIOx->OTYPER |= temp;
 	}
 
 	temp = 0;
 
-	// 5. Configure the alt functionality
+	// 6. Configure the alt functionality
 	if(pGPIOHandle->GPIO_PinConfig.GPIO_PinMode == GPIO_MODE_ALTFN){
 		uint8_t temp1, temp2;
 
 		temp1 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber / 8; // Decides which alt function register to access
 		temp2 = pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber % 8;
-		pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * temp2));
+		pGPIOHandle->pGPIOx->AFR[temp1] &= ~(0xF << 2 *  pGPIOHandle->GPIO_PinConfig.GPIO_PinNumber << (4 * temp2));
 		pGPIOHandle->pGPIOx->AFR[temp1] |= pGPIOHandle->GPIO_PinConfig.GPIO_PinAltFunMode << (4 * temp2);
 
 	}
@@ -189,7 +189,7 @@ uint16_t GPIO_ReadFromInputPort(GPIO_RegDef_t *pGPIOx){
 	return value;
 }
 
-void GPIO_WriteToOuputPin(GPIO_RegDef_t *pGPIOx, uint8_t pinNumber, uint8_t value){
+void GPIO_WriteToOutputPin(GPIO_RegDef_t *pGPIOx, uint8_t pinNumber, uint8_t value){
 	if(value == GPIO_PIN_SET){
 		// Write 1 in corresponding bitfield
 		pGPIOx->ODR |= (1 << pinNumber);
