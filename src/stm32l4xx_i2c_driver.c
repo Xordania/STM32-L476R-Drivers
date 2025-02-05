@@ -252,6 +252,10 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 			if(pI2CHandle->nReceived == pI2CHandle->RxLen){
 				if(pI2CHandle->Sr == 0){
 					pI2CHandle->TxRxState = I2C_NOT_BUSY;
+
+					// Clear the TCIE flag
+					pI2CHandle->pI2Cx->CR1 &= ~(ENABLE << I2Cx_CR1_TCIE);
+
 					I2C_ApplicationEventCallback(pI2CHandle, I2C_EV_RX_CMPLT);
 				}
 			}
@@ -306,6 +310,10 @@ static void I2C_EV_IRQHandler(I2C_Handle_t *pI2CHandle){
 			//application know the transmit has finished successfully
 			if(pI2CHandle->nTransmitted == pI2CHandle->TxLen){
 				if(pI2CHandle->Sr == 0){
+
+					// Clear the TCIE flag
+					pI2CHandle->pI2Cx->CR1 &= ~(ENABLE << I2Cx_CR1_TCIE);
+
 					pI2CHandle->TxRxState = I2C_NOT_BUSY;
 					I2C_ApplicationEventCallback(pI2CHandle, I2C_EV_TX_CMPLT);
 				}
@@ -576,6 +584,7 @@ void I2C_MasterReceiveData(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint32_
 			if(pI2CHandle->pI2Cx->CR2 & (ENABLE << I2Cx_CR2_RELOAD)){
 				//Clear the reload register setting it false
 				pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_RELOAD);
+
 			}else{
 				I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_READ);
 			}
@@ -630,19 +639,20 @@ void I2C_MasterSendDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pTxBuffer, uint32_t
 		//4. Fill the NBytes register, letting the hardware know how many bits are to be transmitted
 		I2C_FillNBytes(pI2CHandle, Len);
 
-		//5. Generate the start condition if one has not already been sent before hand
-		I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_WRITE);
 
-		//6. Turn the TCIE interrupt on
+		//5. Turn the TCIE interrupt on
 		pI2CHandle->pI2Cx->CR1 |= (ENABLE << I2Cx_CR1_TCIE);
 
-		//7. Check if this is the final transaction before the master is done with the slave
+		//6. Check if this is the final transaction before the master is done with the slave
 		//	 The AUTOEND bit being set does nothing if the RELOAD bit is set
 		if(pI2CHandle->Sr != 0){
 			pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_AUTOEND);
 		}else{
 			pI2CHandle->pI2Cx->CR2 |= (ENABLE << I2Cx_CR2_AUTOEND);
 		}
+
+		//7. Generate the start condition if one has not already been sent before hand
+		I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_WRITE);
 
 	}else{
 		I2C_ApplicationEventCallback(pI2CHandle, I2C_EQ_BUSY);
@@ -671,18 +681,19 @@ void I2C_MasterReceiveDataIT(I2C_Handle_t *pI2CHandle, uint8_t *pRxBuffer, uint3
 		//4. Fill the NBytes register, letting the hardware know how many bits are to be received
 		I2C_FillNBytes(pI2CHandle, Len);
 
-		//5. Generate the start condition
-		I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_READ);
-
-		//6. Turn the TCIE interrupt on
+		//5. Turn the TCIE interrupt on
 		pI2CHandle->pI2Cx->CR1 |= (ENABLE << I2Cx_CR1_TCIE);
 
-		//7. Check if this is the final transaction before the master is done with the slave
+		//6. Check if this is the final transaction before the master is done with the slave
 		if(pI2CHandle->Sr != 0){
 			pI2CHandle->pI2Cx->CR2 &= ~(ENABLE << I2Cx_CR2_AUTOEND);
 		}else{
 			pI2CHandle->pI2Cx->CR2 |= (ENABLE << I2Cx_CR2_AUTOEND);
 		}
+
+		//7. Generate the start condition
+		I2C_GenerateStartCondition(pI2CHandle->pI2Cx, slaveAddr, I2C_MASTER_READ);
+
 	}else{
 		I2C_ApplicationEventCallback(pI2CHandle, I2C_EQ_BUSY);
 	}
